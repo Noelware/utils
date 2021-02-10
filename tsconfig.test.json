@@ -1,0 +1,7 @@
+{
+  "extends": "@augu/tsconfig",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node", "@types/jest"]
+  }
+}

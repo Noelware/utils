@@ -1,0 +1,9 @@
+{
+  "extends": "@augu/tsconfig",
+  "compilerOptions": {
+    "declaration": true,
+    "rootDir": "./src",
+    "outDir": "./build"
+  },
+  "exclude": ["node_modules", "tests/**/*"]
+}
