@@ -44,7 +44,7 @@ export interface Ctor<T> {
 }
 
 export type OmitUndefinedOrNull<T extends object> = {
-  [P in keyof T]: Exclude<T[P], null | undefined>;
+  [P in keyof T]: NonNullable<T[P]>;
 }
 
 /**
@@ -109,21 +109,19 @@ export function isObject(x: unknown): x is object {
 }
 
 /**
- * Omits `undefined` and `null` from a object
+ * Omits `undefined` and `null` from a object, doesn't
+ * produce any side-effects.
+ *
  * @param obj The object to omit from
  * @returns The omitted object
  */
 export function omitUndefinedOrNull<T extends object>(obj: T) {
-  const o = {} as OmitUndefinedOrNull<T>;
+  return Object.keys(obj).reduce<OmitUndefinedOrNull<T>>((acc, curr) => {
+    if (obj[curr] === undefined || obj[curr] === null) return acc;
 
-  for (const key in obj) {
-    const value = obj[key];
-    if (value === undefined || value === null) continue;
-
-    o[key as any] = value;
-  }
-
-  return o;
+    acc[curr] = obj[curr];
+    return acc;
+  }, {} as OmitUndefinedOrNull<T>);
 }
 
 /**

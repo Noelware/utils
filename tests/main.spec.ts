@@ -25,8 +25,12 @@ import * as utils from '../src';
 
 describe('Main Utilities', () => {
   test('if a object doesn\'t contain null or undefined values', () => {
-    const obj = { key: 'uwu', owo: undefined, uwu: null, furry: 3621 };
-    const values = utils.omitUndefinedOrNull(obj);
+    const values = utils.omitUndefinedOrNull({
+      key: 'uwu',
+      owo: undefined,
+      uwu: null,
+      furry: 3621
+    });
 
     expect(values).not.toBeUndefined();
     expect(values).toStrictEqual({
