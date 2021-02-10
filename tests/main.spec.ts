@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+import { join, sep } from 'path';
 import * as utils from '../src';
 
 describe('Main Utilities', () => {
@@ -33,4 +34,20 @@ describe('Main Utilities', () => {
       key: 'uwu'
     });
   });
+
+  test('if we receive "$PWD/docs/docs.json" in the array', async() => {
+    const path = join(__dirname, '..', 'docs');
+    const files = await utils.readdir(path);
+
+    expect(files.length).toBe(1);
+    expect(files[0]).toBe(`${path}${sep}docs.json`);
+  });
+
+  test('if \'{}\' is a object', () =>
+    expect(utils.isObject({})).toBe(true)
+  );
+
+  test('if \'null\' is not a object', () =>
+    expect(utils.isObject(null)).toBe(false)
+  );
 });
