@@ -24,7 +24,6 @@ import * as fs from 'fs/promises';
 import { join } from 'path';
 
 const { version: pkgVersion } = require('../package.json');
-
 export { default as EventBus } from './EventBus';
 
 /**
@@ -43,9 +42,12 @@ export interface Ctor<T> {
   default?: Ctor<T> & { default: never; }
 }
 
-export type OmitUndefinedOrNull<T extends object> = {
-  [P in keyof T]: NonNullable<T[P]>;
-}
+// Credit: https://github.com/DonovanDMC
+type FilterFlags<Base, Condition> = { [K in keyof Base]: Base[K] extends Condition ? K : never };
+type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base];
+type FilterOut<Base, Condition> = Pick<Base, keyof Omit<Base, AllowedNames<Base, Condition>>>;
+
+export type OmitUndefinedOrNull<T> = FilterOut<T, null | undefined>;
 
 /**
  * Returns the version of `@augu/utils`
