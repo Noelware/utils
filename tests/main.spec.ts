@@ -54,4 +54,12 @@ describe('Main Utilities', () => {
   test('if \'null\' is not a object', () =>
     expect(utils.isObject(null)).toBe(false)
   );
+
+  test('checks if `x` is the default value', () => {
+    const obj = {};
+
+    // @ts-expect-error We expect this since `x` is not defined, so it'll default to 'lol'
+    const value = utils.getProperty(obj, 'x', 'lol');
+    expect(value).toBe('lol');
+  });
 });

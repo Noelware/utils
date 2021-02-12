@@ -150,3 +150,19 @@ export function omitZero(value: string) {
 export function sleep(duration: number) {
   return new Promise<unknown>(resolve => setTimeout(resolve, duration));
 }
+
+/**
+ * Gets a property from a specified object, if it's null or undefined, it'll
+ * replace it with the specified [defaultValue]. This ensures that we don't
+ * get any nullibility when checking for values in objects and doesn't cause
+ * side-effects in the long run.
+ *
+ * @param object The object to find
+ * @param prop The property to find in the object
+ * @param defaultValue The default value if it's not defined
+ */
+export function getProperty<T extends object, K extends keyof T>(object: T, prop: K, defaultValue: T[K]) {
+  if (object === undefined || object === null) return defaultValue;
+  else if (object.hasOwnProperty(prop)) return object[prop];
+  else return defaultValue;
+}
