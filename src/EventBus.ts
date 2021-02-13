@@ -161,4 +161,11 @@ export default class EventBus<O extends object = EventBusMap> {
     this.#listeners = {};
     return this;
   }
+
+  /**
+   * @inheritdoc [module:utils/EventBus.on; include_params=true]
+   */
+  addListener<K extends keyof O>(event: K, listener: O[K]) {
+    return this.on(event, listener);
+  }
 }
