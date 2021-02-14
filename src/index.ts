@@ -47,12 +47,40 @@ type FilterFlags<Base, Condition> = { [K in keyof Base]: Base[K] extends Conditi
 type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base];
 type FilterOut<Base, Condition> = Pick<Base, keyof Omit<Base, AllowedNames<Base, Condition>>>;
 
+/** Type to omit out `undefined` or `null` */
 export type OmitUndefinedOrNull<T> = FilterOut<T, null | undefined>;
 
 /**
  * Returns the version of `@augu/utils`
  */
 export const version: string = pkgVersion;
+
+/** Months represented as 0-indexed values to the month name */
+export const Months: { [month: number]: string } = {
+  0: 'January',
+  1: 'Feburary',
+  2: 'March',
+  3: 'April',
+  4: 'May',
+  5: 'June',
+  6: 'July',
+  7: 'August',
+  8: 'September',
+  9: 'October',
+  10: 'November',
+  11: 'December'
+};
+
+/** The days of a week */
+export const DaysInWeek: { [day: number]: string } = {
+  0: 'Sunday',
+  1: 'Monday',
+  2: 'Tuesday',
+  3: 'Wednesday',
+  4: 'Thursday',
+  5: 'Friday',
+  6: 'Saturday'
+};
 
 /**
  * Recursively get all files of a directory, even if
@@ -130,7 +158,7 @@ export function omitUndefinedOrNull<T extends object>(obj: T) {
  * Omits zeros of a string for time declaration
  * @param value The value to omit zeros from
  */
-export function omitZero(value: string) {
+export function omitZero(value: any) {
   return `0${value}`.slice(-2);
 }
 
@@ -165,4 +193,85 @@ export function getProperty<T extends object, K extends keyof T>(object: T, prop
   if (object === undefined || object === null) return defaultValue;
   else if (object.hasOwnProperty(prop)) return object[prop];
   else return defaultValue;
+}
+
+/**
+ * Utility function to pluralize a function from a string and integer.
+ * @param str The string to add a `s` to
+ * @param int The number to calculate
+ * @returns The string itself
+ */
+export function pluralize(str: string, int: number) {
+  if (int === 0 || int > 1) return `${int} ${str}s`;
+
+  return `${int} ${str}`;
+}
+
+/**
+ * Humanizes a specific precise millisecond calculate to humanize
+ * the duration.
+ *
+ * @param ms The milliseconds to calculate
+ * @param long If we should add words to it or not
+ * @returns The humanized date
+ */
+export function humanize(ms: number, long: boolean = false) {
+  const years = Math.floor(ms / 31104000000);
+  const months = Math.floor(ms / 2592000000 % 12);
+  const weeks = Math.floor(ms / 604800000 % 7);
+  const days = Math.floor(ms / 86400000 % 30);
+  const hours = Math.floor(ms / 3600000 % 24);
+  const minutes = Math.floor(ms / 60000 % 60);
+  const seconds = Math.floor(ms / 1000 % 60);
+
+  const strings: string[] = [];
+  if (years > 0) strings.push(long ? pluralize('year', years) : `${years}y`);
+  if (months > 0) strings.push(long ? pluralize('month', months) : `${months}mo`);
+  if (weeks > 0) strings.push(long ? pluralize('week', weeks) : `${weeks}w`);
+  if (days > 0) strings.push(long ? pluralize('day', days) : `${days}d`);
+  if (hours > 0) strings.push(long ? pluralize('hour', hours) : `${hours}h`);
+  if (minutes > 0) strings.push(long ? pluralize('minute', minutes) : `${minutes}m`);
+  if (seconds > 0) strings.push(long ? pluralize('second', seconds) : `${seconds}s`);
+
+  return strings.filter(Boolean).join(long ? ', ' : '');
+}
+
+/**
+ * Lazily load a module or path
+ * @param mod The module to load
+ */
+export function lazilyRequire<T>(mod: string): T {
+  let installed = false;
+  try {
+    require(mod);
+    installed = true;
+  } catch {
+    // ignore
+  }
+
+  if (!installed)
+    throw new Error(`Module or path '${mod}' was not found.`);
+
+  const pkg = require(mod);
+  return pkg.default ? pkg.default : pkg;
+}
+
+/**
+ * Formats a ISO-8601-compliant date
+ * @param date The date to format
+ */
+export function formatDate(date: string | Date = new Date()) {
+  const current = date instanceof Date ? date : new Date(date);
+  if (current === undefined) return '<Malformed Date>';
+
+  const month = Months[current.getMonth()];
+  const year = current.getFullYear();
+  const day = current.getDate();
+
+  const hours = omitZero(current.getHours());
+  const minutes = omitZero(current.getMinutes());
+  const seconds = omitZero(current.getSeconds());
+  const isAM = current.getHours() <= 12;
+
+  return `${month} ${day}, ${year} | ${hours}:${minutes}:${seconds} ${isAM ? 'AM' : 'PM'}`;
 }

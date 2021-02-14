@@ -62,4 +62,13 @@ describe('Main Utilities', () => {
     const value = utils.getProperty(obj, 'x', 'lol');
     expect(value).toBe('lol');
   });
+
+  test('if `31535999527` is equal to 1 year, 3 weeks, 4 days, 23 hours, 59 minutes, and 59 seconds', () => {
+    expect(utils.humanize(31535999527)).toBe('1y3w4d23h59m59s');
+    expect(utils.humanize(31535999527, true)).toBe('1 year, 3 weeks, 4 days, 23 hours, 59 minutes, 59 seconds');
+  });
+
+  test('shouldn\'t throw a error when lazy loading', () =>
+    expect(() => utils.lazilyRequire<typeof import('../build/EventBus').default>('../build/EventBus')).not.toThrowError(Error)
+  );
 });
