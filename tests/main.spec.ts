@@ -50,7 +50,7 @@ describe('Main Utilities', () => {
   test('if we should be able to get .spec.ts files', () => {
     const files = utils.readdirSync(__dirname, { extensions: ['.spec.ts'] });
 
-    expect(files.length).toBe(3);
+    expect(files.length).toBe(4);
     expect(files[0]).toBe(`${__dirname}${sep}EventBus.spec.ts`);
   });
 
@@ -59,7 +59,7 @@ describe('Main Utilities', () => {
       extensions: [/\.(spec|test).ts(\?.*)?$/i]
     });
 
-    expect(files.length).toBe(3);
+    expect(files.length).toBe(4);
     expect(files[0]).toBe(`${__dirname}${sep}EventBus.spec.ts`);
   });
 
