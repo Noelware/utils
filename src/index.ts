@@ -49,10 +49,10 @@ type FilterOut<Base, Condition> = Pick<Base, keyof Omit<Base, AllowedNames<Base,
 
 interface ReaddirOptions {
   /** List of extensions to check for */
-  extensions?: string[];
+  extensions?: (string | RegExp)[];
 
-  /** List of directories to exclude */
-  exclude?: string[];
+  /** List of directories to exclude or files */
+  exclude?: (string | RegExp)[];
 }
 
 /** Type to omit out `undefined` or `null` */
@@ -290,13 +290,18 @@ export function readdirSync(path: string, options: ReaddirOptions = {}) {
   const extensions = options.extensions ?? [];
   const excludeDirs = options.exclude ?? [];
 
-  const shouldExclude = (arr: string[], path: string) => {
+  const shouldExclude = (arr: any[], path: string) => {
     // Having no items in the array means it's disabled
     // so let's just make it false for now. :shrug:
     if (!arr.length)
       return false;
 
-    return arr.includes(path);
+    if (arr.some(item => typeof item === 'string'))
+      return arr.includes(path);
+    else if (arr.some(item => item instanceof RegExp))
+      return arr.some((item: RegExp) => item.test(path));
+    else
+      throw new TypeError('`arr` didn\'t satisify instances of `string` and `RegExp`');
   };
 
   let results: string[] = [];
@@ -316,17 +321,21 @@ export function readdirSync(path: string, options: ReaddirOptions = {}) {
       if (shouldExclude(excludeDirs, file))
         continue;
 
-      const files = readdirSync(path, options);
+      const files = readdirSync(fullPath, options);
       results = results.concat(files);
     } else {
       // Get the extension of the file
       const ext = extname(file);
 
+      // Don't include any children specified
+      if (shouldExclude(excludeDirs, file))
+        continue;
+
       // Don't include if it doesn't satisify the "extensions" array
       if (shouldExclude(extensions, ext))
         continue;
 
-      results.push(path);
+      results.push(fullPath);
     }
   }
 

@@ -47,6 +47,31 @@ describe('Main Utilities', () => {
     expect(files[0]).toBe(`${path}${sep}docs.json`);
   });
 
+  test('if we should be able to get .spec.ts files', () => {
+    const files = utils.readdirSync(__dirname, { extensions: ['.spec.ts'] });
+
+    expect(files.length).toBe(3);
+    expect(files[0]).toBe(`${__dirname}${sep}EventBus.spec.ts`);
+  });
+
+  it('if we were able to get .spec.ts files using RegExp', () => {
+    const files = utils.readdirSync(__dirname, {
+      extensions: [/\.(spec|test).ts(\?.*)?$/i]
+    });
+
+    expect(files.length).toBe(3);
+    expect(files[0]).toBe(`${__dirname}${sep}EventBus.spec.ts`);
+  });
+
+  test('if we should be able to exclude `build` and only have .md files returned', () => {
+    const files = utils.readdirSync(__dirname, {
+      exclude: ['dud'],
+      extensions: [/\.(spec|test).ts$/i]
+    });
+
+    expect(files.length).toBe(3);
+  });
+
   test('if \'{}\' is a object', () =>
     expect(utils.isObject({})).toBe(true)
   );
