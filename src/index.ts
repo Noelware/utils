@@ -20,8 +20,8 @@
  * SOFTWARE.
  */
 
-import * as fs from 'fs/promises';
-import { join } from 'path';
+import { readdirSync as fsReaddir, lstatSync as fsStat } from 'fs';
+import { join, extname } from 'path';
 
 const { version: pkgVersion } = require('../package.json');
 export { default as EventBus } from './EventBus';
@@ -47,8 +47,23 @@ type FilterFlags<Base, Condition> = { [K in keyof Base]: Base[K] extends Conditi
 type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base];
 type FilterOut<Base, Condition> = Pick<Base, keyof Omit<Base, AllowedNames<Base, Condition>>>;
 
+interface ReaddirOptions {
+  /** List of extensions to check for */
+  extensions?: string[];
+
+  /** List of directories to exclude */
+  exclude?: string[];
+}
+
 /** Type to omit out `undefined` or `null` */
 export type OmitUndefinedOrNull<T> = FilterOut<T, null | undefined>;
+
+/** Type alias for getting the return type of a constructor as a type */
+export type ConstructorReturnType<T> = T extends new (...args: any[]) => infer P
+  ? P
+  : T extends Ctor<infer P>
+    ? P
+    : unknown;
 
 /**
  * Returns the version of `@augu/utils`
@@ -83,35 +98,20 @@ export const DaysInWeek: { [day: number]: string } = {
 };
 
 /**
- * Recursively get all files of a directory, even if
- * any sub-directories exist. `fs.readdir` does the job
- * done but it doesn't detect directories and places them
- * in the Array, so this is a solution for it.
- *
+ * Promisified version of `utils.readdirSync`
  * @param path The path to get all the files from
+ * @param options The options to use
  * @returns An array of strings that resolve paths
  */
-export async function readdir(path: string) {
-  let results: string[] = [];
-  const files = await fs.readdir(path);
-
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const p = join(path, file);
-
-    // doesn't de-references symbolic links
-    const stats = await fs.lstat(p);
-    const isFile = (stats.isFile() || stats.isFIFO());
-
-    if (!isFile) {
-      const r = await readdir(p);
-      results = results.concat(r);
-    } else {
-      results.push(p);
+export async function readdir(path: string, options: ReaddirOptions = {}) {
+  return new Promise<string[]>((resolve, reject) => {
+    try {
+      const files = readdirSync(path, options);
+      resolve(files);
+    } catch(ex) {
+      reject(ex);
     }
-  }
-
-  return results;
+  });
 }
 
 /**
@@ -274,4 +274,61 @@ export function formatDate(date: string | Date = new Date()) {
   const isAM = current.getHours() <= 12;
 
   return `${month} ${day}, ${year} | ${hours}:${minutes}:${seconds} ${isAM ? 'AM' : 'PM'}`;
+}
+
+/**
+ * Recursively get a list of files from any parent or children directories.
+ *
+ * `fs.readdir`/`fs.readdirSync` can do the job no problem but it doesn't
+ * do it recursively, so this is a utility method to do so, with some bonus
+ * stuff implemented. :)
+ *
+ * @param path The path to look for
+ * @param options Any additional options to include
+ */
+export function readdirSync(path: string, options: ReaddirOptions = {}) {
+  const extensions = options.extensions ?? [];
+  const excludeDirs = options.exclude ?? [];
+
+  const shouldExclude = (arr: string[], path: string) => {
+    // Having no items in the array means it's disabled
+    // so let's just make it false for now. :shrug:
+    if (!arr.length)
+      return false;
+
+    return arr.includes(path);
+  };
+
+  let results: string[] = [];
+  const files = fsReaddir(path);
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const fullPath = join(path, file);
+
+    // doesn't de-reference symbolic links
+    const stats = fsStat(fullPath);
+    const isFile = (stats.isFile() || stats.isFIFO());
+
+    // Check if it's a directory
+    if (!isFile) {
+      // Don't include the directory's children
+      if (shouldExclude(excludeDirs, file))
+        continue;
+
+      const files = readdirSync(path, options);
+      results = results.concat(files);
+    } else {
+      // Get the extension of the file
+      const ext = extname(file);
+
+      // Don't include if it doesn't satisify the "extensions" array
+      if (shouldExclude(extensions, ext))
+        continue;
+
+      results.push(path);
+    }
+  }
+
+  return results;
 }
