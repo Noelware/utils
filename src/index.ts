@@ -237,26 +237,6 @@ export function humanize(ms: number, long: boolean = false) {
 }
 
 /**
- * Lazily load a module or path
- * @param mod The module to load
- */
-export function lazilyRequire<T>(mod: string): T {
-  let installed = false;
-  try {
-    require(mod);
-    installed = true;
-  } catch {
-    // ignore
-  }
-
-  if (!installed)
-    throw new Error(`Module or path '${mod}' was not found.`);
-
-  const pkg = require(mod);
-  return pkg.default ? pkg.default : pkg;
-}
-
-/**
  * Formats a ISO-8601-compliant date
  * @param date The date to format
  */
@@ -340,4 +320,18 @@ export function readdirSync(path: string, options: ReaddirOptions = {}) {
   }
 
   return results;
+}
+
+/**
+ * Returns all the [text]'s first characters as upper case
+ * @param text The text provided
+ * @param delim Optional delimiter to use (default is `' '`)
+ * @example
+ * firstUpper('i code good'); //=> I Code Good
+ */
+export function firstUpper(text: string, delim: string = ' ') {
+  return text
+    .split(delim)
+    .map(t => `${t.charAt(0).toUpperCase()}${t.slice(1)}`)
+    .join(' ');
 }

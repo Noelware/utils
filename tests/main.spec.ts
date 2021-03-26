@@ -47,22 +47,6 @@ describe('Main Utilities', () => {
     expect(files[0]).toBe(`${path}${sep}docs.json`);
   });
 
-  test('if we should be able to get .spec.ts files', () => {
-    const files = utils.readdirSync(__dirname, { extensions: ['.spec.ts'] });
-
-    expect(files.length).toBe(4);
-    expect(files[0]).toBe(`${__dirname}${sep}EventBus.spec.ts`);
-  });
-
-  it('if we were able to get .spec.ts files using RegExp', () => {
-    const files = utils.readdirSync(__dirname, {
-      extensions: [/\.(spec|test).ts(\?.*)?$/i]
-    });
-
-    expect(files.length).toBe(4);
-    expect(files[0]).toBe(`${__dirname}${sep}EventBus.spec.ts`);
-  });
-
   test('if we should be able to exclude `build` and only have .md files returned', () => {
     const files = utils.readdirSync(__dirname, {
       exclude: ['dud'],
@@ -93,7 +77,7 @@ describe('Main Utilities', () => {
     expect(utils.humanize(31535999527, true)).toBe('1 year, 3 weeks, 4 days, 23 hours, 59 minutes, 59 seconds');
   });
 
-  test('shouldn\'t throw a error when lazy loading', () =>
-    expect(() => utils.lazilyRequire<typeof import('../build/EventBus').default>('../build/EventBus')).not.toThrowError(Error)
+  test('should return "Owo Uwu"', () =>
+    expect(utils.firstUpper('owo uwu')).toBe('Owo Uwu')
   );
 });
