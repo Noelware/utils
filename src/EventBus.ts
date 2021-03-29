@@ -55,8 +55,12 @@ export default class EventBus<O extends object = EventBusMap> {
     const listeners = this.#listeners[event as string];
     if (!listeners.length) return false;
 
-    for (let i = 0; i < listeners.length; i++)
-      listeners[i](...args);
+    for (let i = 0; i < listeners.length; i++) {
+      // Preserve async stack this way
+      (async() => {
+        await listeners[i](...args);
+      })();
+    }
 
     return true;
   }
