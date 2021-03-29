@@ -79,6 +79,17 @@ declare namespace utils {
     exclude?: (string | RegExp)[];
   }
 
+  /** Represents a generic listener */
+  type Listener = (...args: any[]) => void;
+
+  /** Represents the arguments if `L` is a `Listener` or just use `any` if not */
+  type ListenerArgs<L> = L extends Listener ? Parameters<L> : any[];
+
+  /** Represents a object of a default EventBus' listeners */
+  interface EventBusMap {
+    [P: string]: Listener;
+  }
+
   /** Returns the version of `@augu/utils` */
   export const version: string;
 
@@ -201,6 +212,78 @@ declare namespace utils {
    * firstUpper('i code good'); //=> I Code Good
    */
   export function firstUpper(text: string, delim?: string): string;
+
+  /**
+   * Represents a EventBus, an emittion tool to pass down data from one component to another
+   */
+  export class EventBus<O extends object = EventBusMap> {
+    /**
+     * Emits a new event from the callstack
+     * @param event The event to emit
+     * @param args Any additional arguments to push
+     * @returns A boolean value if it exists or not
+     */
+    emit<K extends keyof O>(event: K, ...args: ListenerArgs<O[K]>): boolean;
+
+    /**
+     * Sets the maximum amount of listeners to append
+     *
+     * @param count The max size to use, If value `-1` is used, it'll
+     * be infinite and might lead to callstack errors.
+     *
+     * @returns This instance to chain methods
+     */
+    setMaxListeners(count: number): this;
+
+    /**
+     * Pushes a new event to the callstack
+     *
+     * @param event The event to push
+     * @param listener The listener function
+     * @returns This instance to chain methods
+     */
+    on<K extends keyof O>(event: K, listener: O[K]): this;
+
+    /**
+     * Pushes a new event to the callstack and removes it after
+     * it has been emitted from the parent component.
+     *
+     * @param event The event to push
+     * @param listener The listener function
+     * @returns This instance to chain methods
+     */
+    once<K extends keyof O>(event: K, listener: O[K]): this;
+
+    /**
+     * Pushes a event's specific listener from the callstack.
+     * @param event The event to remove
+     * @param listener The listener callback function
+     * @returns This instance to chain methods
+     */
+    removeListener<K extends keyof O>(event: K, listener: O[K]): boolean;
+
+    /**
+     * Returns how many listeners a event has
+     * @param event The event to lookup
+     * @returns A number of how many concurrent listeners are in
+     */
+    size<K extends keyof O>(event: K): number;
+
+    /**
+     * Returns how many events are in this EventBus component
+     */
+    size(): number;
+
+    /**
+     * Removes all listeners from this EventBus component
+     */
+    removeAllListeners(): this;
+
+    /**
+     * @inheritdoc [module:utils/EventBus.on; include_params=true]
+     */
+    addListener<K extends keyof O>(event: K, listener: O[K]): this;
+  }
 }
 
 export = utils;

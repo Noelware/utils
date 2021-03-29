@@ -1,7 +1,7 @@
 {
   "name": "@augu/utils",
   "description": "🌸 Extra utilities to keep code consise and non-repeative.",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "main": "build/index.js",
   "types": "index.d.ts",
   "author": "August <cutie@floofy.dev>",
