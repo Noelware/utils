@@ -22,7 +22,7 @@
     "lint": "eslint src --ext .ts --fix"
   },
   "devDependencies": {
-    "@augu/eslint-config": "1.10.0",
+    "@augu/eslint-config": "2.0.0",
     "@augu/tsconfig": "1.1.0",
     "@types/jest": "26.0.22",
     "@types/node": "14.14.37",
