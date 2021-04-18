@@ -24,7 +24,9 @@ import { readdirSync as fsReaddir, lstatSync as fsStat } from 'fs';
 import { join, extname } from 'path';
 
 const { version: pkgVersion } = require('../package.json');
+
 export { default as EventBus } from './EventBus';
+export { default as Stopwatch } from './Stopwatch';
 
 /**
  * Represents a exported file

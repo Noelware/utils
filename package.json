@@ -8,7 +8,10 @@
   "license": "MIT",
   "repository": "https://github.com/auguwu/utils",
   "bugs": "https://github.com/auguwu/utils/issues",
-  "files": ["build/", "index.d.ts"],
+  "files": [
+    "build/",
+    "index.d.ts"
+  ],
   "funding": {
     "url": "https://github.com/auguwu/utils?sponsor=1"
   },

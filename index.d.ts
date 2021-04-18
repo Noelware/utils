@@ -33,18 +33,39 @@
  */
 /**  */
 declare global {
-  type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]>; }
-  type MaybePromise<T> = T | Promise<T>;
   type FilterFlags<Base, Condition> = { [K in keyof Base]: Base[K] extends Condition ? K : never };
   type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base];
   type FilterOut<Base, Condition> = Pick<Base, keyof Omit<Base, AllowedNames<Base, Condition>>>;
+
+  /** Nestly make all properties in a object not required */
+  type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]>; }
+
+  /** Represents [[T]] as a Promise or not. */
+  type MaybePromise<T> = T | Promise<T>;
+
+  /** Filters out `undefined` or `null` from a object */
   type OmitUndefinedOrNull<T> = FilterOut<T, null | undefined>;
+
+  /** Type alias for getting the return type of a constructor as a type */
   type ConstructorReturnType<T> = T extends new (...args: any[]) => infer P
   ? P
   : T extends Ctor<infer P>
     ? P
     : unknown;
 
+  /**
+   * Interface to mark [[T]] as a `import('...')`/`require('...')` value.
+   * If this module is a CJS import, it'll just return the class, so you can do:
+   *
+   * ```ts
+   * const mod: Ctor<SomeModuleClass> = await import('some-module');
+   * const c = new mod();
+   * ```
+   *
+   * If this module is a ESM import, you must use `new mod.default` for `export default`
+   * statements; `new mod.<some_class>` for `export ...`; or `new mod();` for `export =`
+   * statements.
+   */
   interface Ctor<T> {
     new (...args: any[]): T;
 
@@ -53,24 +74,48 @@ declare global {
 }
 
 declare namespace utils {
-  type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]>; }
-  type MaybePromise<T> = T | Promise<T>;
   type FilterFlags<Base, Condition> = { [K in keyof Base]: Base[K] extends Condition ? K : never };
   type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base];
   type FilterOut<Base, Condition> = Pick<Base, keyof Omit<Base, AllowedNames<Base, Condition>>>;
+
+  /** Nestly make all properties in a object not required */
+  type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]>; }
+
+  /** Represents [[T]] as a Promise or not. */
+  type MaybePromise<T> = T | Promise<T>;
+
+  /** Filters out `undefined` or `null` from a object */
   type OmitUndefinedOrNull<T> = FilterOut<T, null | undefined>;
+
+  /** Type alias for getting the return type of a constructor as a type */
   type ConstructorReturnType<T> = T extends new (...args: any[]) => infer P
   ? P
   : T extends Ctor<infer P>
     ? P
     : unknown;
 
+  /**
+   * Interface to mark [[T]] as a `import('...')`/`require('...')` value.
+   * If this module is a CJS import, it'll just return the class, so you can do:
+   *
+   * ```ts
+   * const mod: Ctor<SomeModuleClass> = await import('some-module');
+   * const c = new mod();
+   * ```
+   *
+   * If this module is a ESM import, you must use `new mod.default` for `export default`
+   * statements; `new mod.<some_class>` for `export ...`; or `new mod();` for `export =`
+   * statements.
+   */
   interface Ctor<T> {
     new (...args: any[]): T;
 
     default?: Ctor<T> & { default: never };
   }
 
+  /**
+   * Options for `utils.readdir` or `utils.readdirSync`
+   */
   interface ReaddirOptions {
     /** List of extensions to check for */
     extensions?: (string | RegExp)[];
@@ -283,6 +328,35 @@ declare namespace utils {
      * @inheritdoc [module:utils/EventBus.on; include_params=true]
      */
     addListener<K extends keyof O>(event: K, listener: O[K]): this;
+  }
+
+  /**
+   * Utility stopwatch for calculating duration on asynchronous execution
+   */
+  export class Stopwatch {
+    /**
+     * Returns the symbol duration
+     * @param type The calculation
+     */
+    public symbolOf(type: number): string;
+
+    /**
+     * Restarts this [[Stopwatch]]
+     */
+    public restart(): void;
+
+    /**
+     * Starts this [[Stopwatch]], calling this function
+     * twice will result in a `SyntaxError`.
+     */
+    public start(): void;
+
+    /**
+     * Ends this [[Stopwatch]] and returns the duration
+     * as a string. Calling this function without calling
+     * `Stopwatch#start` will error with a `TypeError`.
+     */
+    public end(): string;
   }
 }
 
