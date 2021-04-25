@@ -169,7 +169,7 @@ declare namespace utils {
    *
    * @param x The value to check
    */
-  export function isObject(x: unknown): x is object;
+  export function isObject<T extends object = Record<string, unknown>>(x: unknown): x is T;
 
   /**
    * Omits `undefined` and `null` from a object, doesn't
