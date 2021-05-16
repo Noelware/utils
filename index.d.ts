@@ -100,6 +100,12 @@ declare global {
         : T;
 
   /**
+   * Returns a object from a nested object that can be used
+   * for dot notation
+   */
+  type DotNotation<T extends Record<string, unknown>, Keys extends string> = KeyToPropType<T, ObjectKeysWithSeperator<T, '.', Keys>>;
+
+  /**
    * Interface to mark [[T]] as a `import('...')`/`require('...')` value.
    * If this module is a CJS import, it'll just return the class, so you can do:
    *
@@ -215,6 +221,12 @@ declare namespace utils {
       : Obj extends `${infer First}`
         ? T[First]
         : T;
+
+  /**
+   * Returns a object from a nested object that can be used
+   * for dot notation
+   */
+   type DotNotation<T extends Record<string, unknown>, Keys extends string> = KeyToPropType<T, ObjectKeysWithSeperator<T, '.', Keys>>;
 
   /** Returns the version of `@augu/utils` */
   export const version: string;
