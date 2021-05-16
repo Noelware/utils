@@ -33,8 +33,19 @@
  */
 /**  */
 declare global {
+  /**
+   * Filters from it's [Conidition] in the specified [Base] object
+   */
   type FilterFlags<Base, Condition> = { [K in keyof Base]: Base[K] extends Condition ? K : never };
+
+  /**
+   * Get the keys of the [Base]'s allowed names
+   */
   type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base];
+
+  /**
+   * Object of the picked values of the [Base] from the [Condition].
+   */
   type FilterOut<Base, Condition> = Pick<Base, keyof Omit<Base, AllowedNames<Base, Condition>>>;
 
   /** Nestly make all properties in a object not required */
@@ -52,6 +63,41 @@ declare global {
   : T extends Ctor<infer P>
     ? P
     : unknown;
+
+  /** Nestly make all properties in a object required */
+  type DeepRequired<T> = {
+    [P in keyof T]-?: DeepRequired<T[P]>;
+  };
+
+  /**
+   * Returns all the keys of [T] as the specified [Sep]erator.
+   */
+  // credit: Ben - https://github.com/Benricheson101
+  type ObjectKeysWithSeperator<
+    T extends Record<string, any>,
+    Sep extends string = '.',
+    Keys extends keyof T = keyof T
+  > = Keys extends string
+    ? T[Keys] extends any[]
+      ? Keys
+      : T[Keys] extends object
+        ? `${Keys}${Sep}${ObjectKeysWithSeperator<T[Keys], Sep>}`
+        : Keys
+      : never;
+
+  /**
+   * Returns all the keys from the [Obj]ect as a seperated object
+   */
+  // credit: Ben - https://github.com/Benricheson101
+  type KeyToPropType<
+    T extends Record<string, any>,
+    Obj extends ObjectKeysWithSeperator<T, Sep>,
+    Sep extends string = '.'
+  > = Obj extends `${infer First}${Sep}${infer Rest}`
+    ? KeyToPropType<T[First], Rest extends ObjectKeysWithSeperator<T[First], Sep> ? Rest : never, Sep>
+      : Obj extends `${infer First}`
+        ? T[First]
+        : T;
 
   /**
    * Interface to mark [[T]] as a `import('...')`/`require('...')` value.
