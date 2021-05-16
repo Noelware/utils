@@ -136,7 +136,7 @@ export function calculateHRTime(start: [seconds: number, nanoseconds: number]) {
  *
  * @param x The value to check
  */
-export function isObject<T extends object = Record<string, unknown>>(x: unknown): x is T {
+export function isObject<T extends object>(x: unknown): x is T {
   return !Array.isArray(x) && x !== null && typeof x === 'object';
 }
 
