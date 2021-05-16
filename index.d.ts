@@ -181,6 +181,41 @@ declare namespace utils {
     [P: string]: Listener;
   }
 
+  /** Nestly make all properties in a object required */
+  type DeepRequired<T> = {
+    [P in keyof T]-?: DeepRequired<T[P]>;
+  };
+
+  /**
+   * Returns all the keys of [T] as the specified [Sep]erator.
+   */
+  // credit: Ben - https://github.com/Benricheson101
+  type ObjectKeysWithSeperator<
+    T extends Record<string, any>,
+    Sep extends string = '.',
+    Keys extends keyof T = keyof T
+  > = Keys extends string
+    ? T[Keys] extends any[]
+      ? Keys
+      : T[Keys] extends object
+        ? `${Keys}${Sep}${ObjectKeysWithSeperator<T[Keys], Sep>}`
+        : Keys
+      : never;
+
+  /**
+   * Returns all the keys from the [Obj]ect as a seperated object
+   */
+  // credit: Ben - https://github.com/Benricheson101
+  type KeyToPropType<
+    T extends Record<string, any>,
+    Obj extends ObjectKeysWithSeperator<T, Sep>,
+    Sep extends string = '.'
+  > = Obj extends `${infer First}${Sep}${infer Rest}`
+    ? KeyToPropType<T[First], Rest extends ObjectKeysWithSeperator<T[First], Sep> ? Rest : never, Sep>
+      : Obj extends `${infer First}`
+        ? T[First]
+        : T;
+
   /** Returns the version of `@augu/utils` */
   export const version: string;
 
