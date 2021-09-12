@@ -24,44 +24,40 @@ import { join, sep } from 'path';
 import * as utils from '../src';
 
 describe('Main Utilities', () => {
-  test('if a object doesn\'t contain null or undefined values', () => {
+  test("if a object doesn't contain null or undefined values", () => {
     const values = utils.omitUndefinedOrNull({
       key: 'uwu',
       owo: undefined,
       uwu: null,
-      furry: 3621
+      furry: 3621,
     });
 
     expect(values).not.toBeUndefined();
     expect(values).toStrictEqual({
       furry: 3621,
-      key: 'uwu'
+      key: 'uwu',
     });
   });
 
-  test('if we receive "$PWD/docs/docs.json" in the array', async() => {
+  test('if we receive "$PWD/docs/docs.json" in the array', async () => {
     const path = join(__dirname, '..', 'docs');
     const files = await utils.readdir(path);
 
-    expect(files.length).toBe(13);
+    expect(files.length).toBe(16);
   });
 
   test('if we should be able to exclude `build` and only have .md files returned', () => {
     const files = utils.readdirSync(__dirname, {
       exclude: ['dud'],
-      extensions: [/\.(spec|test).ts$/i]
+      extensions: [/\.(spec|test).ts$/i],
     });
 
     expect(files.length).toBe(3);
   });
 
-  test('if \'{}\' is a object', () =>
-    expect(utils.isObject({})).toBe(true)
-  );
+  test("if '{}' is a object", () => expect(utils.isObject({})).toBe(true));
 
-  test('if \'null\' is not a object', () =>
-    expect(utils.isObject(null)).toBe(false)
-  );
+  test("if 'null' is not a object", () => expect(utils.isObject(null)).toBe(false));
 
   test('checks if `x` is the default value', () => {
     const obj = {};
@@ -76,7 +72,5 @@ describe('Main Utilities', () => {
     expect(utils.humanize(31535999527, true)).toBe('1 year, 3 weeks, 4 days, 23 hours, 59 minutes, 59 seconds');
   });
 
-  test('should return "Owo Uwu"', () =>
-    expect(utils.firstUpper('owo uwu')).toBe('Owo Uwu')
-  );
+  test('should return "Owo Uwu"', () => expect(utils.firstUpper('owo uwu')).toBe('Owo Uwu'));
 });
