@@ -52,8 +52,7 @@ export default class Stopwatch {
    * twice will result in a `SyntaxError`.
    */
   start() {
-    if (this.#startTime !== undefined)
-      throw new SyntaxError('Stopwatch has already started');
+    if (this.#startTime !== undefined) throw new SyntaxError('Stopwatch has already started');
 
     this.#startTime = performance.now();
   }
@@ -64,8 +63,7 @@ export default class Stopwatch {
    * `Stopwatch#start` will error with a `TypeError`.
    */
   end() {
-    if (!this.#startTime)
-      throw new TypeError('Stopwatch has not started');
+    if (!this.#startTime) throw new TypeError('Stopwatch has not started');
 
     this.#endTime = performance.now();
     return this.symbolOf(this.#endTime - this.#startTime);

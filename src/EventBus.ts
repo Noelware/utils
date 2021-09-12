@@ -57,7 +57,7 @@ export default class EventBus<O extends object = EventBusMap> {
 
     for (let i = 0; i < listeners.length; i++) {
       // Preserve async stack this way
-      (async() => {
+      (async () => {
         await listeners[i](...args);
       })();
     }
@@ -75,7 +75,9 @@ export default class EventBus<O extends object = EventBusMap> {
    */
   setMaxListeners(count: number) {
     if (count === -1)
-      console.warn(`(@augu/utils:${process.pid}) Notice: You have set the count to \`-1\`, this is not recommended and can cause callstack errors.`);
+      console.warn(
+        `(@augu/utils:${process.pid}) Notice: You have set the count to \`-1\`, this is not recommended and can cause callstack errors.`
+      );
 
     this.#maxListenerSize = count;
     return this;

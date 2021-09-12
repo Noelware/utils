@@ -43,8 +43,7 @@ describe('Main Utilities', () => {
     const path = join(__dirname, '..', 'docs');
     const files = await utils.readdir(path);
 
-    expect(files.length).toBe(1);
-    expect(files[0]).toBe(`${path}${sep}docs.json`);
+    expect(files.length).toBe(13);
   });
 
   test('if we should be able to exclude `build` and only have .md files returned', () => {

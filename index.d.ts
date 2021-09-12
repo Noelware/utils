@@ -49,7 +49,7 @@ declare global {
   type FilterOut<Base, Condition> = Pick<Base, keyof Omit<Base, AllowedNames<Base, Condition>>>;
 
   /** Nestly make all properties in a object not required */
-  type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]>; }
+  type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]> };
 
   /** Represents [[T]] as a Promise or not. */
   type MaybePromise<T> = T | Promise<T>;
@@ -58,11 +58,7 @@ declare global {
   type OmitUndefinedOrNull<T> = FilterOut<T, null | undefined>;
 
   /** Type alias for getting the return type of a constructor as a type */
-  type ConstructorReturnType<T> = T extends new (...args: any[]) => infer P
-  ? P
-  : T extends Ctor<infer P>
-    ? P
-    : unknown;
+  type ConstructorReturnType<T> = T extends new (...args: any[]) => infer P ? P : T extends Ctor<infer P> ? P : unknown;
 
   /** Nestly make all properties in a object required */
   type DeepRequired<T> = {
@@ -81,9 +77,9 @@ declare global {
     ? T[Keys] extends any[]
       ? Keys
       : T[Keys] extends object
-        ? `${Keys}${Sep}${ObjectKeysWithSeperator<T[Keys], Sep>}`
-        : Keys
-      : never;
+      ? `${Keys}${Sep}${ObjectKeysWithSeperator<T[Keys], Sep>}`
+      : Keys
+    : never;
 
   /**
    * Returns all the keys from the [Obj]ect as a seperated object
@@ -95,15 +91,18 @@ declare global {
     Sep extends string = '.'
   > = Obj extends `${infer First}${Sep}${infer Rest}`
     ? KeyToPropType<T[First], Rest extends ObjectKeysWithSeperator<T[First], Sep> ? Rest : never, Sep>
-      : Obj extends `${infer First}`
-        ? T[First]
-        : T;
+    : Obj extends `${infer First}`
+    ? T[First]
+    : T;
 
   /**
    * Returns a object from a nested object that can be used
    * for dot notation
    */
-  type DotNotation<T extends Record<string, unknown>, Keys extends string> = KeyToPropType<T, ObjectKeysWithSeperator<T, '.', Keys>>;
+  type DotNotation<T extends Record<string, unknown>, Keys extends string> = KeyToPropType<
+    T,
+    ObjectKeysWithSeperator<T, '.', Keys>
+  >;
 
   /**
    * Interface to mark [[T]] as a `import('...')`/`require('...')` value.
@@ -123,6 +122,19 @@ declare global {
 
     default?: Ctor<T> & { default: never };
   }
+
+  /**
+   * Decouples a Promise's type from {@link __T__}. Returns the inferred
+   * type or `never` if it's not a Promise.
+   */
+  type DecouplePromise<T> = T extends Promise<infer U> ? U : never;
+
+  /**
+   * Decouples an array's type from {@link __T__}. Returns the inferred
+   * type or `never` if it's not an Array.
+   */
+  // eslint-disable-next-line
+  type DecoupleArray<T> = T extends Array<infer U> ? U : never;
 }
 
 declare namespace utils {
@@ -131,7 +143,7 @@ declare namespace utils {
   type FilterOut<Base, Condition> = Pick<Base, keyof Omit<Base, AllowedNames<Base, Condition>>>;
 
   /** Nestly make all properties in a object not required */
-  type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]>; }
+  type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]> };
 
   /** Represents [[T]] as a Promise or not. */
   type MaybePromise<T> = T | Promise<T>;
@@ -140,11 +152,7 @@ declare namespace utils {
   type OmitUndefinedOrNull<T> = FilterOut<T, null | undefined>;
 
   /** Type alias for getting the return type of a constructor as a type */
-  type ConstructorReturnType<T> = T extends new (...args: any[]) => infer P
-  ? P
-  : T extends Ctor<infer P>
-    ? P
-    : unknown;
+  type ConstructorReturnType<T> = T extends new (...args: any[]) => infer P ? P : T extends Ctor<infer P> ? P : unknown;
 
   /**
    * Interface to mark [[T]] as a `import('...')`/`require('...')` value.
@@ -204,9 +212,9 @@ declare namespace utils {
     ? T[Keys] extends any[]
       ? Keys
       : T[Keys] extends object
-        ? `${Keys}${Sep}${ObjectKeysWithSeperator<T[Keys], Sep>}`
-        : Keys
-      : never;
+      ? `${Keys}${Sep}${ObjectKeysWithSeperator<T[Keys], Sep>}`
+      : Keys
+    : never;
 
   /**
    * Returns all the keys from the [Obj]ect as a seperated object
@@ -218,15 +226,31 @@ declare namespace utils {
     Sep extends string = '.'
   > = Obj extends `${infer First}${Sep}${infer Rest}`
     ? KeyToPropType<T[First], Rest extends ObjectKeysWithSeperator<T[First], Sep> ? Rest : never, Sep>
-      : Obj extends `${infer First}`
-        ? T[First]
-        : T;
+    : Obj extends `${infer First}`
+    ? T[First]
+    : T;
 
   /**
    * Returns a object from a nested object that can be used
    * for dot notation
    */
-   type DotNotation<T extends Record<string, unknown>, Keys extends string> = KeyToPropType<T, ObjectKeysWithSeperator<T, '.', Keys>>;
+  type DotNotation<T extends Record<string, unknown>, Keys extends string> = KeyToPropType<
+    T,
+    ObjectKeysWithSeperator<T, '.', Keys>
+  >;
+
+  /**
+   * Decouples a Promise's type from {@link __T__}. Returns the inferred
+   * type or `never` if it's not a Promise.
+   */
+  type DecouplePromise<T> = T extends Promise<infer U> ? U : never;
+
+  /**
+   * Decouples an array's type from {@link __T__}. Returns the inferred
+   * type or `never` if it's not an Array.
+   */
+  // eslint-disable-next-line
+  type DecoupleArray<T> = T extends Array<infer U> ? U : never;
 
   /** Returns the version of `@augu/utils` */
   export const version: string;

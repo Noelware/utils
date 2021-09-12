@@ -36,20 +36,20 @@ export interface Ctor<T> {
    * Constructs a new instance of [T]
    * @param args Any additional arguments, if any
    */
-  new(...args: any[]): T;
+  new (...args: any[]): T;
 
   /**
    * Returns the default export of [T], if it was a ES module
    */
-  default?: Ctor<T> & { default: never; }
+  default?: Ctor<T> & { default: never };
 }
 
 // Credit: https://github.com/DonovanDMC
-type FilterFlags<Base, Condition> = { [K in keyof Base]: Base[K] extends Condition ? K : never };
-type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base];
-type FilterOut<Base, Condition> = Pick<Base, keyof Omit<Base, AllowedNames<Base, Condition>>>;
+export type FilterFlags<Base, Condition> = { [K in keyof Base]: Base[K] extends Condition ? K : never };
+export type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base];
+export type FilterOut<Base, Condition> = Pick<Base, keyof Omit<Base, AllowedNames<Base, Condition>>>;
 
-interface ReaddirOptions {
+export interface ReaddirOptions {
   /** List of extensions to check for */
   extensions?: (string | RegExp)[];
 
@@ -64,8 +64,71 @@ export type OmitUndefinedOrNull<T> = FilterOut<T, null | undefined>;
 export type ConstructorReturnType<T> = T extends new (...args: any[]) => infer P
   ? P
   : T extends Ctor<infer P>
-    ? P
-    : unknown;
+  ? P
+  : unknown;
+
+/** Nestly make all properties in a object not required */
+export type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]> };
+
+/** Represents [[T]] as a Promise or not. */
+export type MaybePromise<T> = T | Promise<T>;
+
+/** Nestly make all properties in a object required */
+export type DeepRequired<T> = {
+  [P in keyof T]-?: DeepRequired<T[P]>;
+};
+
+/**
+ * Returns all the keys of [T] as the specified [Sep]erator.
+ */
+// credit: Ben - https://github.com/Benricheson101
+export type ObjectKeysWithSeperator<
+  T extends Record<string, any>,
+  Sep extends string = '.',
+  Keys extends keyof T = keyof T
+> = Keys extends string
+  ? T[Keys] extends any[]
+    ? Keys
+    : T[Keys] extends object
+    ? `${Keys}${Sep}${ObjectKeysWithSeperator<T[Keys], Sep>}`
+    : Keys
+  : never;
+
+/**
+ * Returns all the keys from the [Obj]ect as a seperated object
+ */
+// credit: Ben - https://github.com/Benricheson101
+export type KeyToPropType<
+  T extends Record<string, any>,
+  Obj extends ObjectKeysWithSeperator<T, Sep>,
+  Sep extends string = '.'
+> = Obj extends `${infer First}${Sep}${infer Rest}`
+  ? KeyToPropType<T[First], Rest extends ObjectKeysWithSeperator<T[First], Sep> ? Rest : never, Sep>
+  : Obj extends `${infer First}`
+  ? T[First]
+  : T;
+
+/**
+ * Returns a object from a nested object that can be used
+ * for dot notation
+ */
+export type DotNotation<T extends Record<string, unknown>, Keys extends string> = KeyToPropType<
+  T,
+  ObjectKeysWithSeperator<T, '.', Keys>
+>;
+
+/**
+ * Decouples a Promise's type from {@link __T__}. Returns the inferred
+ * type or `never` if it's not a Promise.
+ */
+export type DecouplePromise<T> = T extends Promise<infer U> ? U : never;
+
+/**
+ * Decouples an array's type from {@link __T__}. Returns the inferred
+ * type or `never` if it's not an Array.
+ */
+// eslint-disable-next-line
+export type DecoupleArray<T> = T extends Array<infer U> ? U : never;
 
 /**
  * Returns the version of `@augu/utils`
@@ -85,7 +148,7 @@ export const Months: { [month: number]: string } = {
   8: 'September',
   9: 'October',
   10: 'November',
-  11: 'December'
+  11: 'December',
 };
 
 /** The days of a week */
@@ -96,7 +159,7 @@ export const DaysInWeek: { [day: number]: string } = {
   3: 'Wednesday',
   4: 'Thursday',
   5: 'Friday',
-  6: 'Saturday'
+  6: 'Saturday',
 };
 
 /**
@@ -110,7 +173,7 @@ export async function readdir(path: string, options: ReaddirOptions = {}) {
     try {
       const files = readdirSync(path, options);
       resolve(files);
-    } catch(ex) {
+    } catch (ex) {
       reject(ex);
     }
   });
@@ -178,7 +241,7 @@ export function omitZero(value: any) {
  * @returns An unknown Promise
  */
 export function sleep(duration: number) {
-  return new Promise<unknown>(resolve => setTimeout(resolve, duration));
+  return new Promise<unknown>((resolve) => setTimeout(resolve, duration));
 }
 
 /**
@@ -219,12 +282,12 @@ export function pluralize(str: string, int: number) {
  */
 export function humanize(ms: number, long: boolean = false) {
   const years = Math.floor(ms / 31104000000);
-  const months = Math.floor(ms / 2592000000 % 12);
-  const weeks = Math.floor(ms / 604800000 % 7);
-  const days = Math.floor(ms / 86400000 % 30);
-  const hours = Math.floor(ms / 3600000 % 24);
-  const minutes = Math.floor(ms / 60000 % 60);
-  const seconds = Math.floor(ms / 1000 % 60);
+  const months = Math.floor((ms / 2592000000) % 12);
+  const weeks = Math.floor((ms / 604800000) % 7);
+  const days = Math.floor((ms / 86400000) % 30);
+  const hours = Math.floor((ms / 3600000) % 24);
+  const minutes = Math.floor((ms / 60000) % 60);
+  const seconds = Math.floor((ms / 1000) % 60);
 
   const strings: string[] = [];
   if (years > 0) strings.push(long ? pluralize('year', years) : `${years}y`);
@@ -275,15 +338,11 @@ export function readdirSync(path: string, options: ReaddirOptions = {}) {
   const shouldExclude = (arr: any[], path: string) => {
     // Having no items in the array means it's disabled
     // so let's just make it false for now. :shrug:
-    if (!arr.length)
-      return false;
+    if (!arr.length) return false;
 
-    if (arr.some(item => typeof item === 'string'))
-      return arr.includes(path);
-    else if (arr.some(item => item instanceof RegExp))
-      return arr.some((item: RegExp) => item.test(path));
-    else
-      throw new TypeError('`arr` didn\'t satisify instances of `string` and `RegExp`');
+    if (arr.some((item) => typeof item === 'string')) return arr.includes(path);
+    else if (arr.some((item) => item instanceof RegExp)) return arr.some((item: RegExp) => item.test(path));
+    else throw new TypeError("`arr` didn't satisify instances of `string` and `RegExp`");
   };
 
   let results: string[] = [];
@@ -295,13 +354,12 @@ export function readdirSync(path: string, options: ReaddirOptions = {}) {
 
     // doesn't de-reference symbolic links
     const stats = fsStat(fullPath);
-    const isFile = (stats.isFile() || stats.isFIFO());
+    const isFile = stats.isFile() || stats.isFIFO();
 
     // Check if it's a directory
     if (!isFile) {
       // Don't include the directory's children
-      if (shouldExclude(excludeDirs, file))
-        continue;
+      if (shouldExclude(excludeDirs, file)) continue;
 
       const files = readdirSync(fullPath, options);
       results = results.concat(files);
@@ -310,12 +368,10 @@ export function readdirSync(path: string, options: ReaddirOptions = {}) {
       const ext = extname(file);
 
       // Don't include any children specified
-      if (shouldExclude(excludeDirs, file))
-        continue;
+      if (shouldExclude(excludeDirs, file)) continue;
 
       // Don't include if it doesn't satisify the "extensions" array
-      if (shouldExclude(extensions, ext))
-        continue;
+      if (shouldExclude(extensions, ext)) continue;
 
       results.push(fullPath);
     }
@@ -334,6 +390,6 @@ export function readdirSync(path: string, options: ReaddirOptions = {}) {
 export function firstUpper(text: string, delim: string = ' ') {
   return text
     .split(delim)
-    .map(t => `${t.charAt(0).toUpperCase()}${t.slice(1)}`)
+    .map((t) => `${t.charAt(0).toUpperCase()}${t.slice(1)}`)
     .join(' ');
 }
