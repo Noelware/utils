@@ -41,8 +41,8 @@ describe('EventBus', () => {
     bus.emit('test', 'uwu');
   });
 
-  test('if `uwu` wasn\'t the value', () => {
-    bus.on('test', value => {
+  test("if `uwu` wasn't the value", () => {
+    bus.on('test', (value) => {
       expect(value).not.toBeUndefined();
       expect(value).not.toBe('uwu');
     });
