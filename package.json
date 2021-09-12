@@ -1,6 +1,6 @@
 {
   "name": "@augu/utils",
-  "description": "🌸 Extra utilities to keep code consise and non-repeative.",
+  "description": "🌸 Extra utilities to keep code consist and non-repetitive.",
   "version": "1.5.4",
   "main": "build/index.js",
   "types": "index.d.ts",

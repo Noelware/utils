@@ -1,6 +1,6 @@
 # @augu/utils
 
-> 🌸 **Extra utilities to keep code consise and non-repeative.**
+> 🌸 **Extra utilities to keep code consist and non-repetitive.**
 
 ## Usage
 

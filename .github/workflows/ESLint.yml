@@ -45,7 +45,7 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
-      
+
       - name: Uses Node.js v${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -55,7 +55,7 @@ jobs:
         run: npm i -g eslint
 
       - name: Installs all local dependencies
-        run: npm ci
+        run: yarn
 
       - name: Lints the repository for any code-checking errors
         run: npm run lint
