@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 August
+ * Copyright (c) 2021 Noel
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,25 +21,25 @@
  */
 
 /** Represents a generic listener */
-type Listener = (...args: any[]) => void;
+export type Listener = (...args: any[]) => void;
 
 /** Represents the arguments if `L` is a `Listener` or just use `any` if not */
-type ListenerArgs<L> = L extends Listener ? Parameters<L> : any[];
+export type ListenerArgs<L> = L extends Listener ? Parameters<L> : any[];
 
 /** Represents a object of a default EventBus' listeners */
-interface EventBusMap {
+export interface EventBusMap {
   [P: string]: Listener;
 }
 
 /** Represents the listeners object */
-interface ListenerObject {
+export interface ListenerObject {
   [P: string]: Listener[];
 }
 
 /**
  * Represents a EventBus, an emittion tool to pass down data from one component to another
  */
-export default class EventBus<O extends object = EventBusMap> {
+export default class EventBus<O extends {} = EventBusMap> {
   #maxListenerSize: number = 250;
   #listeners: ListenerObject = {};
 

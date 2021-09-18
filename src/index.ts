@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 August
+ * Copyright (c) 2021 Noel
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,12 @@
 
 import { readdirSync as fsReaddir, lstatSync as fsStat } from 'fs';
 import { join, extname } from 'path';
+import { deprecate } from './deprecate';
+import os from 'os';
 
 const { version: pkgVersion } = require('../package.json');
 
+export { deprecate };
 export { default as EventBus } from './EventBus';
 export { default as Stopwatch } from './Stopwatch';
 
@@ -129,6 +132,21 @@ export type DecouplePromise<T> = T extends Promise<infer U> ? U : never;
  */
 // eslint-disable-next-line
 export type DecoupleArray<T> = T extends Array<infer U> ? U : never;
+
+/**
+ * Returns the network information from the {@link getExternalNetwork} function.
+ */
+export interface NetworkInfo {
+  /**
+   * Returns the family, which can be `4` or `6`.
+   */
+  family: 4 | 6;
+
+  /**
+   * Returns the address of the network.
+   */
+  address: string;
+}
 
 /**
  * Returns the version of `@augu/utils`
@@ -385,11 +403,56 @@ export function readdirSync(path: string, options: ReaddirOptions = {}) {
  * @param text The text provided
  * @param delim Optional delimiter to use (default is `' '`)
  * @example
- * firstUpper('i code good'); //=> I Code Good
+ * titleCase('i code good'); //=> I Code Good
  */
-export function firstUpper(text: string, delim: string = ' ') {
+export function titleCase(text: string, delim: string = ' ') {
   return text
     .split(delim)
     .map((t) => `${t.charAt(0).toUpperCase()}${t.slice(1)}`)
     .join(' ');
 }
+
+/**
+ * Returns the external networks from the OS, if any.
+ * @param strictIPv4 If retriveing should only be only IPv4 interfaces.
+ * @returns The first non-internal network that the user can reach.
+ * @example
+ * ```js
+ * const { getExternalNetwork } = require('@augu/utils');
+ *
+ * const network = getExternalNetwork();
+ * // => { address: '127.0.0.1', family: 4 }
+ * ```
+ */
+export function getExternalNetwork(strictIPv4 = false): NetworkInfo | null {
+  const interfaces = os.networkInterfaces();
+  const keys = Object.keys(interfaces);
+
+  for (let i = 0; i < keys.length; i++) {
+    const interface_ = interfaces[i];
+    if (!interface_) continue;
+
+    for (let j = 0; j < interface_.length; j++) {
+      const innerInterface = interface_[j];
+      const family = strictIPv4 ? innerInterface.family === 'IPv4' : true;
+      if (family && !innerInterface.internal)
+        return {
+          family: innerInterface.family === 'IPv4' ? 4 : 6,
+          address: innerInterface.address,
+        };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Returns all the [text]'s first characters as upper case
+ *
+ * @deprecated This method has been renamed to {@link titleCase}.
+ * @param text The text provided
+ * @param delim Optional delimiter to use (default is `' '`)
+ * @example
+ * firstUpper('i code good'); //=> I Code Good
+ */
+export const firstUpper = deprecate.func(titleCase);

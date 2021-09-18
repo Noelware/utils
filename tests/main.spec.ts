@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 August
+ * Copyright (c) 2021 Noel
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,8 +20,8 @@
  * SOFTWARE.
  */
 
-import { join, sep } from 'path';
 import * as utils from '../src';
+import { join } from 'path';
 
 describe('Main Utilities', () => {
   test("if a object doesn't contain null or undefined values", () => {
@@ -60,10 +60,9 @@ describe('Main Utilities', () => {
   test("if 'null' is not a object", () => expect(utils.isObject(null)).toBe(false));
 
   test('checks if `x` is the default value', () => {
-    const obj = {};
-
-    // @ts-expect-error We expect this since `x` is not defined, so it'll default to 'lol'
+    const obj: Record<string, any> = {};
     const value = utils.getProperty(obj, 'x', 'lol');
+
     expect(value).toBe('lol');
   });
 
@@ -72,5 +71,5 @@ describe('Main Utilities', () => {
     expect(utils.humanize(31535999527, true)).toBe('1 year, 3 weeks, 4 days, 23 hours, 59 minutes, 59 seconds');
   });
 
-  test('should return "Owo Uwu"', () => expect(utils.firstUpper('owo uwu')).toBe('Owo Uwu'));
+  test('should return "Owo Uwu"', () => expect(utils.titleCase('owo uwu')).toBe('Owo Uwu'));
 });
