@@ -135,6 +135,11 @@ declare global {
    */
   // eslint-disable-next-line
   type DecoupleArray<T> = T extends Array<infer U> ? U : never;
+
+  /**
+   * Extracts all arguments and returns as a tuple from {@link F}.
+   */
+  type ExtractArguments<F> = F extends (...args: infer U) => any ? U : never;
 }
 
 declare namespace utils {
@@ -252,6 +257,26 @@ declare namespace utils {
   // eslint-disable-next-line
   type DecoupleArray<T> = T extends Array<infer U> ? U : never;
 
+  /**
+   * Extracts all arguments and returns as a tuple from {@link F}.
+   */
+  type ExtractArguments<F> = F extends (...args: infer U) => any ? U : never;
+
+  /**
+   * Returns the network information from the {@link getExternalNetwork} function.
+   */
+  interface NetworkInfo {
+    /**
+     * Returns the family, which can be `4` or `6`.
+     */
+    family: 4 | 6;
+
+    /**
+     * Returns the address of the network.
+     */
+    address: string;
+  }
+
   /** Returns the version of `@augu/utils` */
   export const version: string;
 
@@ -368,12 +393,37 @@ declare namespace utils {
 
   /**
    * Returns all the [text]'s first characters as upper case
+   *
+   * @deprecated
    * @param text The text provided
    * @param delim Optional delimiter to use (default is `' '`)
    * @example
    * firstUpper('i code good'); //=> I Code Good
    */
   export function firstUpper(text: string, delim?: string): string;
+
+  /**
+   * Returns all the [text]'s first characters as upper case
+   * @param text The text provided
+   * @param delim Optional delimiter to use (default is `' '`)
+   * @example
+   * titleCase('i code good'); //=> I Code Good
+   */
+  export const titleCase: typeof firstUpper;
+
+  /**
+   * Returns the external networks from the OS, if any.
+   * @param strictIPv4 If retriveing should only be only IPv4 interfaces.
+   * @returns The first non-internal network that the user can reach.
+   * @example
+   * ```js
+   * const { getExternalNetwork } = require('@augu/utils');
+   *
+   * const network = getExternalNetwork();
+   * // => { address: '127.0.0.1', family: 4 }
+   * ```
+   */
+  export function getExternalNetwork(strictIPv4?: boolean): NetworkInfo | null;
 
   /**
    * Represents a EventBus, an emittion tool to pass down data from one component to another
@@ -474,6 +524,56 @@ declare namespace utils {
      * `Stopwatch#start` will error with a `TypeError`.
      */
     public end(): string;
+  }
+
+  /**
+   * Namespace to deprecate functions, methods, properties, etc.
+   */
+  // eslint-disable-next-line
+  export namespace deprecate {
+    /**
+     * Deprecates a function from being used, it'll emit a warning using [process.emitWarning](https://nodejs.org/api/process.html#process_process_emitwarning_warning_options).
+     *
+     * @example
+     * ```js
+     * const { deprecate: { func: deprecateFunction } } = require('@augu/utils');
+     *
+     * const myFunc = deprecateFunction(() => {
+     *    return 'owo';
+     * }, '`myFunc` is deprecated and will be removed in a future release.', ['someOtherFunc']);
+     * ```
+     *
+     * @param f The function to use that is deprecated.
+     * @param message An alternative message instead of `Function myFunc is deprecated and will be removed in a future release.`
+     * @param alternatives A list of alternative functions that will be printed.
+     * @returns The function that will be ran BUT it'll emit a warning message.
+     */
+    export function func<F extends (...args: any[]) => any, U extends any[] = ExtractArguments<F>, R = ReturnType<F>>(
+      f: F,
+      message?: string | ((name: string, alternatives?: string[]) => string),
+      alternatives?: string[]
+    ): (...args: U) => R;
+
+    /**
+     * Decorator for deprecating a class that shouldn't be in-use.
+     *
+     * @example
+     * ```ts
+     * // This requires TypeScript since decorators are still in-proposal.
+     * import { deprecate } from '@augu/utils';
+     *
+     * (at)deprecate.Class((name, alternatives) => `Try out ${alternatives?.join(', ')}.`, ['owo', 'uwu'])
+     * class SomeClass {}
+     * ```
+     *
+     * @param message An alternative message instead of `Class "SomeClass" is deprecated and will be removed in a future release.`
+     * @param alternatives A list of alternative classes to print out.
+     * @returns The decorator hook to apply.
+     */
+    export function Class(
+      message?: string | ((name: string, alternatives: string[]) => string),
+      alternatives?: string[]
+    ): ClassDecorator;
   }
 }
 
