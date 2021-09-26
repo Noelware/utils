@@ -310,8 +310,9 @@ declare namespace utils {
    * `true` from `typeof x === 'object'`
    *
    * @param x The value to check
+   * @param includeJS If the function call should include JS objects like `Date`
    */
-  export function isObject<T extends object>(x: unknown): x is T;
+  export function isObject<T extends object>(x: unknown, includeJS?: boolean): x is T;
 
   /**
    * Omits `undefined` and `null` from a object, doesn't
@@ -424,6 +425,14 @@ declare namespace utils {
    * ```
    */
   export function getExternalNetwork(strictIPv4?: boolean): NetworkInfo | null;
+
+  /**
+   * Deeply and recursively merges 2 objects into one.
+   * @param target The target object to merge
+   * @param source The source target to merge
+   * @returns The {@link target} object with the {@link source} merged together.
+   */
+  export function deepMerge<T = {}, S = T>(target: Partial<T>, source: Partial<S>): T & S;
 
   /**
    * Represents a EventBus, an emittion tool to pass down data from one component to another

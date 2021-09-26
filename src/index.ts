@@ -216,9 +216,12 @@ export function calculateHRTime(start: [seconds: number, nanoseconds: number]) {
  * `true` from `typeof x === 'object'`
  *
  * @param x The value to check
+ * @param includeJS If we should include JavaScript objects like `Date`.
  */
-export function isObject<T extends object>(x: unknown): x is T {
-  return !Array.isArray(x) && x !== null && typeof x === 'object';
+export function isObject<T extends object>(x: unknown, includeJS = false): x is T {
+  if (includeJS) return !Array.isArray(x) && x !== null && typeof x === 'object';
+
+  return !Array.isArray(x) && x !== null && typeof x === 'object' && !(x instanceof Date);
 }
 
 /**
@@ -456,3 +459,26 @@ export function getExternalNetwork(strictIPv4 = false): NetworkInfo | null {
  * firstUpper('i code good'); //=> I Code Good
  */
 export const firstUpper = deprecate.func(titleCase);
+
+/**
+ * Deeply and recursively merges 2 objects into one.
+ * @param target The target object to merge
+ * @param source The source target to merge
+ * @returns The {@link target} object with the {@link source} merged together.
+ */
+export function deepMerge<T = {}, S = T>(target: Partial<T>, source: Partial<S>): T & S {
+  const mergeFn = (obj: any) => {
+    for (let prop in obj) {
+      if (obj.hasOwnProperty(prop)) {
+        if (isObject(prop) || Array.isArray(obj[prop])) {
+          target[prop] = deepMerge(target[prop], obj[prop]);
+        } else {
+          target[prop] = obj[prop];
+        }
+      }
+    }
+  };
+
+  mergeFn(source);
+  return target as unknown as T & S;
+}

@@ -1,5 +1,5 @@
 /**
- * Jest configuration for Wumpcord
+ * Jest configuration for @augu/utils
  */
 module.exports = {
   testEnvironment: 'node',
@@ -9,7 +9,7 @@ module.exports = {
   name: 'utils',
   globals: {
     'ts-jest': {
-      tsconfig: './tsconfig.test.json'
-    }
-  }
+      tsconfig: './tsconfig.test.json',
+    },
+  },
 };
