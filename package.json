@@ -31,7 +31,7 @@
     "@augu/eslint-config": "2.2.0",
     "@augu/tsconfig": "1.1.1",
     "@types/jest": "27.4.0",
-    "@types/node": "16.11.24",
+    "@types/node": "16.11.41",
     "@typescript-eslint/eslint-plugin": "5.11.0",
     "@typescript-eslint/parser": "5.11.0",
     "eslint": "7.32.0",
