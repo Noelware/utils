@@ -1,23 +1,22 @@
-# @augu/utils
+# 🌸 @noelware/utils
 
-> 🌸 **Extra utilities to keep code consist and non-repetitive.**
+> _Noelware's utilities package to not repeat code in our TypeScript projects._
+
+**@noelware/utils** is a package full of extra utilities, that is Node.js and Browser-compatible.
 
 ## Usage
 
-```js
-// ESM
-import utils from '@augu/utils';
+```typescript
+import { Stopwatch, omitUndefinedOrNull } from '@noelware/utils';
 
-// CommonJS
-const utils = require('@augu/utils');
-```
+const stopwatch = Stopwatch.newStarted();
+// ... do something ...
+stopwatch.end();
 
-## Installation
-
-```sh
-$ npm i @augu/utils
+const omitted = omitUndefinedOrNull([undefined, null, 'a', 'b', 2, -2, true]);
+// => ['a', 'b', 2, -2, true]
 ```
 
 ## License
 
-**@augu/utils** is released under MIT License. :heart:
+**@noelware/utils** is released under the **MIT License** with love by Noelware.

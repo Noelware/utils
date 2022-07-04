@@ -1,4 +1,1 @@
-.github
-build
-docs
-node_modules
+.gitignore

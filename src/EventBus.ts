@@ -1,5 +1,6 @@
-/**
- * Copyright (c) 2021 Noel
+/*
+ * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
+ * Copyright (c) 2021-2022 Noelware <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,140 +21,136 @@
  * SOFTWARE.
  */
 
-/** Represents a generic listener */
-export type Listener = (...args: any[]) => void;
+/** Represents a generic listener function. */
+export type Listener = (...args: unknown[]) => void;
 
-/** Represents the arguments if `L` is a `Listener` or just use `any` if not */
-export type ListenerArgs<L> = L extends Listener ? Parameters<L> : any[];
+/** Extracts the arguments of a specific {@link Listener}. */
+export type ExtractListenerArguments<L> = L extends Listener ? Parameters<L> : any[];
 
-/** Represents a object of a default EventBus' listeners */
-export interface EventBusMap {
-  [P: string]: Listener;
-}
+/** Represents a generic definition of the type-safe events in a {@link EventBus}. */
+export type GenericEventBusMap = Record<string, Listener>;
 
-/** Represents the listeners object */
-export interface ListenerObject {
-  [P: string]: Listener[];
+export interface EventEmitterLike {
+  addListener(event: string, listener: (...args: any[]) => void): any;
+  emit(event: string, ...args: unknown[]): any;
+  once(event: string, listener: (...args: any[]) => void): any;
+  on(event: string, listener: (...args: any[]) => void): any;
 }
 
 /**
- * Represents a EventBus, an emittion tool to pass down data from one component to another
+ * Checks if {@link emitter} is a event emitter or not.
+ * @param emitter The unknown property.
+ * @returns Asserts that {@link emitter} is {@link EventEmitterLike}.
  */
-export default class EventBus<O extends {} = EventBusMap> {
-  #maxListenerSize: number = 250;
-  #listeners: ListenerObject = {};
+export function isEventEmitterLike<T extends EventEmitterLike>(emitter: unknown): emitter is T {
+  const conditions = [
+    typeof emitter === 'object' && !Array.isArray(emitter) && emitter !== null,
+    typeof (emitter as EventEmitterLike).addListener === 'function',
+    typeof (emitter as EventEmitterLike).emit === 'function',
+    typeof (emitter as EventEmitterLike).once === 'function',
+    typeof (emitter as EventEmitterLike).on === 'function'
+  ];
+
+  return conditions.every((t) => t === true);
+}
+
+/**
+ * Represents an extended event emitter.
+ */
+export class EventBus<Map extends Record<string, Listener> = GenericEventBusMap> {
+  ['constructor']!: typeof EventBus;
+  #maxListenerSize = 250;
+  #listeners: Record<keyof Map, Listener[]> = {} as any;
 
   /**
-   * Emits a new event from the callstack
-   * @param event The event to emit
-   * @param args Any additional arguments to push
-   * @returns A boolean value if it exists or not
+   * Emits a event from the listener callstack
+   * @param event The event to be emitted.
+   * @param args The arguments for the event.
    */
-  emit<K extends keyof O>(event: K, ...args: ListenerArgs<O[K]>) {
-    if (!this.#listeners.hasOwnProperty(event)) return false;
+  emit<E extends keyof Map>(event: E, ...args: ExtractListenerArguments<Map[E]>) {
+    if (!this.#listeners.hasOwnProperty(event)) return;
 
-    const listeners = this.#listeners[event as string];
-    if (!listeners.length) return false;
-
-    for (let i = 0; i < listeners.length; i++) {
-      // Preserve async stack this way
-      (async () => {
-        await listeners[i](...args);
-      })();
+    const listeners = this.#listeners[event];
+    if (!listeners.length) return;
+    for (const listener of listeners) {
+      listener(...args);
     }
-
-    return true;
   }
 
   /**
-   * Sets the maximum amount of listeners to append
-   *
-   * @param count The max size to use, If value `-1` is used, it'll
-   * be infinite and might lead to callstack errors.
-   *
-   * @returns This instance to chain methods
+   * Sets the max listeners to {@link count}. Use `-1` if you wish to not have
+   * a max listener count, this is dangerous.
+   * @param count The amount of listeners this {@link EventBus} can hold.
+   * @returns This {@link EventBus} instance to chain methods
    */
   setMaxListeners(count: number) {
-    if (count === -1)
-      console.warn(
-        `(@augu/utils:${process.pid}) Notice: You have set the count to \`-1\`, this is not recommended and can cause callstack errors.`
-      );
-
     this.#maxListenerSize = count;
     return this;
   }
 
   /**
-   * Pushes a new event to the callstack
-   *
-   * @param event The event to push
-   * @param listener The listener function
-   * @returns This instance to chain methods
+   * Adds a new listener to the event's callstack.
+   * @param event The event to add
+   * @param listener The listener callback when it is emitted.
+   * @return This {@link EventBus} instance to chain methods
    */
-  on<K extends keyof O>(event: K, listener: O[K]) {
-    const listeners = this.#listeners[event as string] ?? [];
-
+  on<E extends keyof Map>(event: E, listener: Map[E]) {
+    const listeners = this.#listeners[event] ?? [];
     if (this.#maxListenerSize !== -1 && listeners.length > this.#maxListenerSize)
-      throw new RangeError(`Reached the maximum amount of listeners to append (event=${event})`);
+      throw new RangeError(`Reached the maximum amount of listeners to append on event [${String(event)}]`);
 
-    listeners.push(listener as any);
-    this.#listeners[event as string] = listeners;
+    listeners.push(listener);
+    this.#listeners[event] = listeners;
 
     return this;
   }
 
   /**
-   * Pushes a new event to the callstack and removes it after
-   * it has been emitted from the parent component.
-   *
-   * @param event The event to push
-   * @param listener The listener function
-   * @returns This instance to chain methods
+   * Adds a new listener to the event's callstack that will be emitted once and removed
+   * from the callstack.
+   * @param event The event to register
+   * @param listener The listener callback when it is emitted.
+   * @return This {@link EventBus} instance to chain methods
    */
-  once<K extends keyof O>(event: K, listener: O[K]) {
-    const onceListener: any = (...args: any[]) => {
-      (listener as any)(...args);
-      return this.removeListener(event, onceListener);
+  once<E extends keyof Map>(event: E, listener: Map[E]) {
+    const listenerToEmit = (...args: unknown[]) => {
+      listener(...args);
+      this.removeListener(event, listenerToEmit as unknown as Map[E]);
     };
 
-    return this.on(event, onceListener);
+    return this.on(event, listenerToEmit as unknown as Map[E]);
   }
 
   /**
-   * Pushes a event's specific listener from the callstack.
-   * @param event The event to remove
-   * @param listener The listener callback function
-   * @returns This instance to chain methods
+   * Removes a callback listener from the event's callstack.
+   * @param event The event
+   * @param listener The listener callback that was registered.
    */
-  removeListener<K extends keyof O>(event: K, listener: O[K]) {
+  removeListener<E extends keyof Map>(event: E, listener: Map[E]) {
     if (!this.#listeners.hasOwnProperty(event)) return false;
 
     const listeners = this.#listeners[event as string];
-    if (!listeners.length) return false;
+    if (!listeners.length) return;
 
     const index = listeners.indexOf(listener as any);
     if (index !== -1) listeners.splice(index, 1);
 
-    this.#listeners[event as string] = listeners;
-    return true;
+    this.#listeners[event] = listeners;
   }
 
   /**
-   * Returns how many listeners a event has
-   * @param event The event to lookup
-   * @returns A number of how many concurrent listeners are in
+   * Returns how many event callbacks have been registered.
+   * @param event The event to check
    */
-  size<K extends keyof O>(event: K): number;
+  size<E extends keyof Map>(event: E): number;
 
   /**
-   * Returns how many events are in this EventBus component
+   * Returns how many events have been registered.
    */
   size(): number;
   size(event?: string) {
     if (event !== undefined) {
-      const listeners = this.#listeners[event];
-      if (!listeners.length) return 0;
-
+      const listeners = this.#listeners[event] ?? [];
       return listeners.length;
     }
 
@@ -161,17 +158,16 @@ export default class EventBus<O extends {} = EventBusMap> {
   }
 
   /**
-   * Removes all listeners from this EventBus component
+   * Removes all the listeners from this {@link EventBus}
+   * @return This {@link EventBus} instance to chain methods
    */
   removeAllListeners() {
-    this.#listeners = {};
+    this.#listeners = {} as any;
     return this;
   }
 
-  /**
-   * @inheritdoc
-   */
-  addListener<K extends keyof O>(event: K, listener: O[K]) {
+  /** @inheritdoc EventBus.on */
+  addListener<E extends keyof Map>(event: E, listener: Map[E]) {
     return this.on(event, listener);
   }
 }

@@ -1,5 +1,6 @@
-/**
- * Copyright (c) 2021 Noel
+/*
+ * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
+ * Copyright (c) 2021-2022 Noelware <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,52 +21,46 @@
  * SOFTWARE.
  */
 
-import { performance } from 'perf_hooks';
+import { isBrowser, tryRequire } from './functions';
 
-/**
- * Utility stopwatch for calculating duration on asynchronous execution
- */
-export default class Stopwatch {
+const now = isBrowser
+  ? Date.now
+  : (() => {
+      const mark = tryRequire<typeof import('perf_hooks')>('perf_hooks');
+      return mark.performance.now;
+    })();
+
+export class Stopwatch {
   #startTime?: number;
   #endTime?: number;
 
-  /**
-   * Returns the symbol duration
-   * @param type The calculation
-   */
-  symbolOf(type: number) {
-    if (type > 1000) return `${type.toFixed(1)}s`;
-    if (type > 1) return `${type.toFixed(1)}ms`;
-    return `${type.toFixed(1)}µs`;
+  static createStarted() {
+    const self = new Stopwatch();
+    self.start();
+
+    return self;
   }
 
-  /**
-   * Restarts this [[Stopwatch]]
-   */
-  restart() {
-    this.#startTime = performance.now();
-    this.#endTime = undefined;
+  static measure(func: () => void) {
+    const self = Stopwatch.createStarted();
+    func();
+
+    return self.stop();
   }
 
-  /**
-   * Starts this [[Stopwatch]], calling this function
-   * twice will result in a `SyntaxError`.
-   */
   start() {
-    if (this.#startTime !== undefined) throw new SyntaxError('Stopwatch has already started');
+    if (this.#startTime !== undefined) return;
 
-    this.#startTime = performance.now();
+    this.#startTime = now();
   }
 
-  /**
-   * Ends this [[Stopwatch]] and returns the duration
-   * as a string. Calling this function without calling
-   * `Stopwatch#start` will error with a `TypeError`.
-   */
-  end() {
-    if (!this.#startTime) throw new TypeError('Stopwatch has not started');
+  stop() {
+    if (this.#startTime === undefined) return;
 
-    this.#endTime = performance.now();
-    return this.symbolOf(this.#endTime - this.#startTime);
+    this.#endTime = now();
+
+    if (this.#endTime > 1000) return `${this.#endTime.toFixed(1)}s`;
+    if (this.#endTime > 1) return `${this.#endTime.toFixed(1)}ms`;
+    return `${this.#endTime.toFixed(1)}µs`;
   }
 }

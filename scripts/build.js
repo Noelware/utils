@@ -1,5 +1,6 @@
-/**
- * Copyright (c) 2021 Noel
+/*
+ * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
+ * Copyright (c) 2021-2022 Noelware <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,33 +21,25 @@
  * SOFTWARE.
  */
 
-import { EventBus } from '../src';
+const { build } = require('tsup');
 
-interface TestMap {
-  test(x: string): void;
-}
-
-describe('EventBus', () => {
-  let bus!: EventBus<TestMap>;
-
-  beforeAll(() => (bus = new EventBus()));
-  afterEach(() => bus.removeAllListeners());
-
-  test('if we receive `uwu` from the event', () => {
-    bus.on('test', (value) => {
-      expect(value).not.toBeUndefined();
-      expect(value).toBe('uwu');
-    });
-
-    bus.emit('test', 'uwu');
+const main = async () => {
+  console.log('[@noelware/utils] building library...');
+  await build({
+    bundle: true,
+    clean: true,
+    dts: true,
+    outDir: './dist',
+    entry: ['./src/index.ts'],
+    name: 'utils',
+    sourcemap: true,
+    treeshake: true
   });
 
-  test("if `uwu` wasn't the value", () => {
-    bus.on('test', (value) => {
-      expect(value).not.toBeUndefined();
-      expect(value).not.toBe('uwu');
-    });
+  console.log('[@noelware/utils] done~ ^-^');
+};
 
-    bus.emit('test', 'ea sports >w>');
-  });
+main().catch((ex) => {
+  console.error(ex);
+  process.exit(1);
 });
