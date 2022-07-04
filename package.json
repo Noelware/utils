@@ -23,7 +23,7 @@
     "build:prod": "yarn lint && yarn fmt && node ./scripts/build.js",
     "build": "yarn lint && yarn fmt && tsc",
     "lint": "eslint src --ext .ts --fix",
-    "fmt": "prettier --write ./.prettierc.json src/**/*.ts"
+    "fmt": "prettier --write ./.prettierrc.json src/**/*.ts"
   },
   "devDependencies": {
     "@augu/eslint-config": "2.2.0",
