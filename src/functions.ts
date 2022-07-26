@@ -21,9 +21,11 @@
  * SOFTWARE.
  */
 
-import { OmitUndefinedOrNull, ReaddirOptions } from './types';
+import type { OmitUndefinedOrNull, ReaddirOptions } from './types';
 
 declare var window: any;
+
+let cachedModules = new Map<string, object>();
 
 /**
  * Returns if we are in the browser or not
@@ -146,11 +148,33 @@ export function shouldExclude<T>(data: T[], predicate: (item: T) => boolean) {
   return data.some(predicate);
 }
 
-/** Returns a module from a CJS environment. */
-export function tryRequire<T>(module: string): T {
-  return require(module);
+/**
+ * Lazy evaluates a module via `require` and caches it, or returns the cached result
+ * if the module was already lazily evaluated.
+ *
+ * @param mod The module to evaluate
+ * @returns The module as {@link T}.
+ */
+export function tryRequire<T>(mod: string): T {
+  try {
+    if (cachedModules.has(mod)) return cachedModules.get(mod) as unknown as T;
+    const m = require(mod);
+
+    cachedModules.set(mod, m);
+    return m;
+  } catch (e) {
+    assertIsError(e);
+
+    throw new Error(`Module "${mod}" was not found. Did you install it?`, { cause: e });
+  }
 }
 
+/**
+ * Reads a directory's contents and returns the contents and the subdirectories' children.
+ * @param path The path to look for, this can be relative or absolute.
+ * @param options The {@link ReaddirOptions} options to use, if needed.
+ * @returns A list of files if in a Node.js environment, otherwise an empty array if in a browser context.
+ */
 export function readdirSync(path: string, options: ReaddirOptions = {}) {
   // If it is the browser, this will be a empty array since you can't read directories.
   if (isBrowser) return [];
@@ -205,4 +229,8 @@ export function omitUndefinedOrNull<T extends object>(obj: T) {
     acc[curr] = obj[curr];
     return acc;
   }, {} as OmitUndefinedOrNull<T>);
+}
+
+export function assertIsError<E extends Error = Error>(value: unknown): asserts value is E {
+  if (!(value instanceof Error)) throw new Error(`Value was not \`Error\`.`);
 }

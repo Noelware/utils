@@ -48,15 +48,20 @@ export class Stopwatch {
     return self.stop();
   }
 
+  static async measureAsync(func: () => Promise<void>) {
+    const self = Stopwatch.createStarted();
+    await func();
+
+    return self.stop();
+  }
+
   start() {
     if (this.#startTime !== undefined) return;
-
     this.#startTime = now();
   }
 
   stop() {
     if (this.#startTime === undefined) return;
-
     this.#endTime = now();
 
     if (this.#endTime > 1000) return `${this.#endTime.toFixed(1)}s`;

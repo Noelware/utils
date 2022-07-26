@@ -24,16 +24,3 @@ description: Noelware's utilities package to not repeat code in our TypeScript p
 repository: https://github.com/Noelware/utils
 emoji: '🌸'
 renderer: typescript
-plugins:
-  config:
-    registry: ncr.noelware.org
-    auth:
-      type: basic
-      username: ${{ env['NCR_USERNAME'] }}
-      password: ${{ env['NCR_PASSWORD'] }}
-
-  typescript:
-    id: org.noelware.docs.typescript
-    options:
-      path: /libraries/@noelware/utils/api
-      cwd: ${{ cwd() }}
