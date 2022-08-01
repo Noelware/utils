@@ -97,3 +97,6 @@ jobs:
 
       - name: Check for any compile errors
         run: tsc --noEmit
+
+      - name: Run tests
+        run: yarn test

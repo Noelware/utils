@@ -21,33 +21,10 @@
  * SOFTWARE.
  */
 
-export type {
-  ReaddirOptions,
-  AllowedNames,
-  ConstructorReturnType,
-  Ctor,
-  DecoupleArray,
-  DeepPartial,
-  DeepRequired,
-  DotNotation,
-  FilterFlags,
-  FilterOut,
-  KeyToPropType,
-  MaybePromise,
-  ObjectKeysWithSeperator,
-  OmitUndefinedOrNull
-} from './types';
+import { defineConfig } from 'vitest/config';
 
-export * from './constants';
-export * from './functions';
-export {
-  EventBus,
-  type EventEmitterLike,
-  type GenericEventBusMap,
-  type ExtractListenerArguments,
-  type Listener,
-  isEventEmitterLike
-} from './EventBus';
-
-export { Stopwatch } from './Stopwatch';
-export { Lazy } from './Lazy';
+export default defineConfig({
+  test: {
+    dir: 'tests'
+  }
+});

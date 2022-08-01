@@ -21,17 +21,22 @@
  * SOFTWARE.
  */
 
-import { isBrowser, tryRequire } from './functions';
+import { tryRequire } from './functions';
+import { isBrowser } from './constants';
+import { lazy } from './Lazy';
 
-const now = isBrowser
-  ? Date.now
-  : (() => {
-      const mark = tryRequire<typeof import('perf_hooks')>('perf_hooks');
-      return mark.performance.now;
-    })();
+const now = lazy(() =>
+  isBrowser
+    ? Date.now
+    : (() => {
+        const mark = tryRequire<typeof import('perf_hooks')>('perf_hooks');
+        return mark.performance.now;
+      })()
+);
 
 export class Stopwatch {
   #startTime?: number;
+  #now: () => number = now.get();
   #endTime?: number;
 
   static createStarted() {
@@ -57,12 +62,12 @@ export class Stopwatch {
 
   start() {
     if (this.#startTime !== undefined) return;
-    this.#startTime = now();
+    this.#startTime = this.#now();
   }
 
   stop() {
     if (this.#startTime === undefined) return;
-    this.#endTime = now();
+    this.#endTime = this.#now();
 
     if (this.#endTime > 1000) return `${this.#endTime.toFixed(1)}s`;
     if (this.#endTime > 1) return `${this.#endTime.toFixed(1)}ms`;

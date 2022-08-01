@@ -22,18 +22,9 @@
  */
 
 import type { OmitUndefinedOrNull, ReaddirOptions } from './types';
-
-declare var window: any;
+import { isBrowser } from './constants';
 
 let cachedModules = new Map<string, object>();
-
-/**
- * Returns if we are in the browser or not
- */
-export const isBrowser = typeof process === 'undefined' && typeof window === 'object';
-
-/** Returns if we are in a Node.js environment or not. */
-export const isNode = typeof process !== 'undefined' && typeof window === 'undefined';
 
 /**
  * Calculates the distance of `process.hrtime` and
@@ -201,12 +192,12 @@ export function readdirSync(path: string, options: ReaddirOptions = {}) {
       if (shouldExclude(excluded, excludePredicate(file))) continue;
       if (shouldExclude(extensions, excludePredicate(file))) continue;
 
-      results.push(file.name);
+      results.push(fullPath);
     } else {
       if (shouldExclude(excluded, excludePredicate(file))) continue;
       if (shouldExclude(extensions, excludePredicate(file))) continue;
 
-      results = results.concat(...readdirSync(path, options));
+      results = results.concat(...readdirSync(fullPath, options));
     }
   }
 

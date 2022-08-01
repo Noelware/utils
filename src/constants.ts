@@ -21,6 +21,9 @@
  * SOFTWARE.
  */
 
+declare var window: any;
+declare var document: any;
+
 /** Months represented as 0-indexed values to the month name */
 export const Months: { [month: number]: string } = {
   0: 'January',
@@ -47,3 +50,14 @@ export const DaysInWeek: { [day: number]: string } = {
   5: 'Friday',
   6: 'Saturday'
 };
+
+/**
+ * Returns if we are in the browser or not
+ */
+export const isBrowser = (() => {
+  const attributes = [typeof window, typeof document];
+  return attributes.every((i) => i !== 'undefined');
+})();
+
+/** Returns if we are in a Node.js environment or not. */
+export const isNode = typeof process !== 'undefined' && !isBrowser;

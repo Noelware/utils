@@ -1,7 +1,7 @@
 {
   "name": "@noelware/utils",
   "description": "🌸 Extra utilities to keep code consist and non-repetitive.",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Noel <cutie@floofy.dev>, Noelware Team <team@noelware.org>",
@@ -21,8 +21,10 @@
   },
   "scripts": {
     "build:prod": "yarn lint && yarn fmt && node ./scripts/build.js",
+    "test:ui": "vitest --ui",
     "build": "yarn lint && yarn fmt && tsc",
     "lint": "eslint src --ext .ts --fix",
+    "test": "vitest --run",
     "fmt": "prettier --write ./.prettierrc.json src/**/*.ts"
   },
   "devDependencies": {
@@ -31,10 +33,13 @@
     "@types/node": "18.0.1",
     "@typescript-eslint/eslint-plugin": "5.31.0",
     "@typescript-eslint/parser": "5.31.0",
+    "@vitest/ui": "0.20.2",
     "eslint": "8.20.0",
     "eslint-config-prettier": "8.5.0",
     "prettier": "2.7.1",
     "tsup": "6.2.0",
-    "typescript": "4.7.4"
+    "typescript": "4.7.4",
+    "vite": "3.0.4",
+    "vitest": "0.20.2"
   }
 }

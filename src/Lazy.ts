@@ -21,33 +21,19 @@
  * SOFTWARE.
  */
 
-export type {
-  ReaddirOptions,
-  AllowedNames,
-  ConstructorReturnType,
-  Ctor,
-  DecoupleArray,
-  DeepPartial,
-  DeepRequired,
-  DotNotation,
-  FilterFlags,
-  FilterOut,
-  KeyToPropType,
-  MaybePromise,
-  ObjectKeysWithSeperator,
-  OmitUndefinedOrNull
-} from './types';
+export function lazy<T>(func: () => T): Lazy<T> {
+  return new Lazy(func);
+}
 
-export * from './constants';
-export * from './functions';
-export {
-  EventBus,
-  type EventEmitterLike,
-  type GenericEventBusMap,
-  type ExtractListenerArguments,
-  type Listener,
-  isEventEmitterLike
-} from './EventBus';
+export class Lazy<T> {
+  #cached: T | undefined = undefined;
+  #func: () => T;
 
-export { Stopwatch } from './Stopwatch';
-export { Lazy } from './Lazy';
+  constructor(func: () => T) {
+    this.#func = func;
+  }
+
+  get() {
+    return this.#cached !== undefined ? this.#cached : this.#func.call(this);
+  }
+}
