@@ -120,6 +120,7 @@ describe('EventBus', () => {
 test('Lazy', () => {
   const lazyValue = new utils.Lazy(() => 1);
   expect(lazyValue.get()).toBe(1);
+  expect(lazyValue.get()).toBe(1);
 });
 
 describe('functions', () => {
@@ -162,7 +163,7 @@ describe('functions', () => {
     const files = utils.readdirSync(join(process.cwd(), '.yarn', 'releases'));
     expect(files).toMatchInlineSnapshot(`
       [
-        "${process.cwd()}/.yarn/releases/yarn-3.2.2.cjs",
+        "${process.cwd()}/.yarn/releases/yarn-3.2.3.cjs",
       ]
     `);
   });

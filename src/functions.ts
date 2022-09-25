@@ -27,6 +27,11 @@ import { isBrowser } from './constants';
 let cachedModules = new Map<string, object>();
 
 /**
+ * Represents a no-operation function.
+ */
+export const noop = () => {};
+
+/**
  * Calculates the distance of `process.hrtime` and
  * returns the milliseconds from the duration
  *

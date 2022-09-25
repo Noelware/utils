@@ -57,7 +57,7 @@ export function isEventEmitterLike<T extends EventEmitterLike>(emitter: unknown)
 /**
  * Represents an extended event emitter.
  */
-export class EventBus<Map extends Record<string, Listener> = GenericEventBusMap> {
+export class EventBus<Map extends {} = GenericEventBusMap> {
   ['constructor']!: typeof EventBus;
   #maxListenerSize = 250;
   #listeners: Record<keyof Map, Listener[]> = {} as any;
@@ -99,7 +99,7 @@ export class EventBus<Map extends Record<string, Listener> = GenericEventBusMap>
     if (this.#maxListenerSize !== -1 && listeners.length > this.#maxListenerSize)
       throw new RangeError(`Reached the maximum amount of listeners to append on event [${String(event)}]`);
 
-    listeners.push(listener);
+    listeners.push(listener as any);
     this.#listeners[event] = listeners;
 
     return this;
@@ -114,7 +114,7 @@ export class EventBus<Map extends Record<string, Listener> = GenericEventBusMap>
    */
   once<E extends keyof Map>(event: E, listener: Map[E]) {
     const listenerToEmit = (...args: unknown[]) => {
-      listener(...args);
+      (listener as any)(...args);
       this.removeListener(event, listenerToEmit as unknown as Map[E]);
     };
 

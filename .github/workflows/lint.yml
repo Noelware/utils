@@ -68,7 +68,7 @@ jobs:
 
       - name: Setup Yarn and node-modules cache
         id: yarn-cache
-        uses: auguwu/nodepm-cache-action@master
+        uses: auguwu/node-pm-action@master
 
       - name: Install dependencies
         if: steps.yarn-cache.outputs.cache-hit != 'true' || steps.yarn-cache.outputs.node-modules-cache-hit != 'true'

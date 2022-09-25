@@ -34,6 +34,6 @@ export class Lazy<T> {
   }
 
   get() {
-    return this.#cached !== undefined ? this.#cached : this.#func.call(this);
+    return this.#cached !== undefined ? this.#cached : (this.#cached = this.#func.call(this));
   }
 }
