@@ -29,6 +29,7 @@ let cachedModules = new Map<string, object>();
 /**
  * Represents a no-operation function.
  */
+// eslint-disable-next-line
 export const noop = () => {};
 
 /**
