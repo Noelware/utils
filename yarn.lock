@@ -143,7 +143,7 @@ __metadata:
     "@types/node": 18.7.20
     "@typescript-eslint/eslint-plugin": 5.39.0
     "@typescript-eslint/parser": 5.39.0
-    "@vitest/ui": 0.23.4
+    "@vitest/ui": 0.24.0
     eslint: 8.24.0
     eslint-config-prettier: 8.5.0
     prettier: 2.7.1
@@ -349,12 +349,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/ui@npm:0.23.4":
-  version: 0.23.4
-  resolution: "@vitest/ui@npm:0.23.4"
+"@vitest/ui@npm:0.24.0":
+  version: 0.24.0
+  resolution: "@vitest/ui@npm:0.24.0"
   dependencies:
     sirv: ^2.0.2
-  checksum: 52ccb6dda1da49d34e4fb18128cb25a7b02f5e39f1d0865a1dd723a386bb615dd7002ecc883a42ea7fbae1999af297f12c1e3de52804989808c332b4fa6e4bbd
+  checksum: 998e9b4e87f1e336f9751423d0127d29036f60c15c8d3b81fa1516dec32d705d10732e0ab852d8efcf7ceff639208fef9fe82afcfb972c19c300d0488a5a7616
   languageName: node
   linkType: hard
 
