@@ -36,7 +36,7 @@
     "@vitest/ui": "0.24.3",
     "eslint": "8.24.0",
     "eslint-config-prettier": "8.5.0",
-    "prettier": "2.7.1",
+    "prettier": "2.8.0",
     "tsup": "6.5.0",
     "typescript": "4.9.3",
     "vite": "3.2.4",
