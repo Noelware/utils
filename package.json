@@ -28,7 +28,7 @@
     "fmt": "prettier --write ./.prettierrc.json src/**/*.ts"
   },
   "devDependencies": {
-    "@augu/eslint-config": "3.0.0",
+    "@augu/eslint-config": "4.0.1",
     "@augu/tsconfig": "1.1.1",
     "@types/node": "18.16.6",
     "@typescript-eslint/eslint-plugin": "5.59.5",
