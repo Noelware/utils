@@ -21,7 +21,7 @@
     },
     "scripts": {
         "build:prod": "yarn lint && yarn fmt && node ./scripts/build.js",
-        "build": "yarn lint && yarn fmt && tsc",
+        "build": "yarn build:prod",
         "lint": "eslint src --ext .ts --fix",
         "test": "vitest --run",
         "fmt": "prettier --write ./.prettierrc.json **/*.{ts,js,yaml,yml,json,md}"

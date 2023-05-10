@@ -4,7 +4,8 @@
         "outDir": "./build",
         "isolatedModules": true,
         "skipLibCheck": true,
-        "skipDefaultLibCheck": true
+        "skipDefaultLibCheck": true,
+        "removeComments": false
     },
     "include": ["**/*.ts"],
     "exclude": ["node_modules"]
