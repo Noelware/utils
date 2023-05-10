@@ -21,100 +21,79 @@
 
 name: GitHub CodeQL
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - master
+    workflow_dispatch:
+    push:
+        branches:
+            - master
 
-    paths-ignore:
-      - '.github/**'
-      - '.vscode/**'
-      - 'assets/**'
-      - 'docker/**'
-      - '.idea/**'
-      - '.dockerignore'
-      - '.gitignore'
-      - '**.md'
-      - 'LICENSE'
-      - 'renovate.json'
+        paths-ignore:
+            - '.github/**'
+            - '.vscode/**'
+            - 'assets/**'
+            - 'docker/**'
+            - '.idea/**'
+            - '.dockerignore'
+            - '.gitignore'
+            - '**.md'
+            - 'LICENSE'
+            - 'renovate.json'
 
-  pull_request:
-    branches:
-      - master
+    pull_request:
+        branches:
+            - master
 
-    paths-ignore:
-      - '.github/**'
-      - '.vscode/**'
-      - 'assets/**'
-      - 'docker/**'
-      - '.idea/**'
-      - '.dockerignore'
-      - '.gitignore'
-      - '**.md'
-      - 'LICENSE'
-      - 'renovate.json'
+        paths-ignore:
+            - '.github/**'
+            - '.vscode/**'
+            - 'assets/**'
+            - 'docker/**'
+            - '.idea/**'
+            - '.dockerignore'
+            - '.gitignore'
+            - '**.md'
+            - 'LICENSE'
+            - 'renovate.json'
 
-  schedule:
-    - cron: '21 2 * * 4'
+    schedule:
+        - cron: '21 2 * * 4'
 
 jobs:
-  analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-    strategy:
-      fail-fast: false
-      matrix:
-        language:
-          - javascript
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    analyze:
+        name: Analyze
+        runs-on: ubuntu-latest
+        permissions:
+            actions: read
+            contents: read
+            security-events: write
+        strategy:
+            fail-fast: false
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
 
-      - name: Setup Node.js v18
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
+            - name: Setup Node.js 20
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20.x
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+            - name: Setup Yarn and node-modules cache
+              id: yarn-cache
+              uses: auguwu/node-pm-action@master
 
-      - name: Setup Yarn Cache
-        uses: actions/cache@v3
-        id: yarn-cache
-        with:
-          path: ${{steps.yarn-cache-dir-path.outputs.dir}}
-          key: ${{ runner.OS }}-yarn-cache-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.OS }}-yarn-cache-
+            - name: Install dependencies
+              if: steps.yarn-cache.outputs.cache-hit != 'true' || steps.yarn-cache.outputs.node-modules-cache-hit != 'true'
+              run: yarn install --immutable
 
-      - name: Cache node_modules
-        id: cache-node-modules
-        uses: actions/cache@v3
-        with:
-          path: ./node_modules
-          key: ${{ runner.os }}-18.x-nodemodules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-18.x-nodemodules-
+            - name: Initialize CodeQL
+              uses: github/codeql-action/init@v2
+              with:
+                  languages: javascript
 
-      - name: Install dependencies
-        if: steps.yarn-cache.outputs.cache-hit != 'true' || steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: yarn install --immutable
+            - name: Lint project
+              run: yarn lint
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
-        with:
-          language: ${{ matrix.language }}
+            - name: Check for any compile errors
+              run: tsc --noEmit
 
-      - name: Lint project
-        run: yarn lint
-
-      - name: Check for any compile errors
-        run: tsc --noEmit
-
-      - name: CodeQL!
-        uses: github/codeql-action/analyze@v2
+            - name: CodeQL!
+              uses: github/codeql-action/analyze@v2

@@ -1,6 +1,6 @@
 /*
  * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
- * Copyright (c) 2021-2022 Noelware <team@noelware.org>
+ * Copyright (c) 2021-2023 Noelware <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,51 +26,51 @@ import { isBrowser } from './constants';
 import { lazy } from './Lazy';
 
 const now = lazy(() =>
-  isBrowser
-    ? Date.now
-    : (() => {
-        const mark = tryRequire<typeof import('perf_hooks')>('perf_hooks');
-        return mark.performance.now;
-      })()
+    isBrowser
+        ? Date.now
+        : (() => {
+              const mark = tryRequire<typeof import('perf_hooks')>('perf_hooks');
+              return mark.performance.now;
+          })()
 );
 
 export class Stopwatch {
-  #startTime?: number;
-  #now: () => number = now.get();
-  #endTime?: number;
+    #startTime?: number;
+    #now: () => number = now.get();
+    #endTime?: number;
 
-  static createStarted() {
-    const self = new Stopwatch();
-    self.start();
+    static createStarted() {
+        const self = new Stopwatch();
+        self.start();
 
-    return self;
-  }
+        return self;
+    }
 
-  static measure(func: () => void) {
-    const self = Stopwatch.createStarted();
-    func();
+    static measure(func: () => void) {
+        const self = Stopwatch.createStarted();
+        func();
 
-    return self.stop();
-  }
+        return self.stop();
+    }
 
-  static async measureAsync(func: () => Promise<void>) {
-    const self = Stopwatch.createStarted();
-    await func();
+    static async measureAsync(func: () => Promise<void>) {
+        const self = Stopwatch.createStarted();
+        await func();
 
-    return self.stop();
-  }
+        return self.stop();
+    }
 
-  start() {
-    if (this.#startTime !== undefined) return;
-    this.#startTime = this.#now();
-  }
+    start() {
+        if (this.#startTime !== undefined) return;
+        this.#startTime = this.#now();
+    }
 
-  stop() {
-    if (this.#startTime === undefined) return;
-    this.#endTime = this.#now();
+    stop() {
+        if (this.#startTime === undefined) return;
+        this.#endTime = this.#now();
 
-    if (this.#endTime > 1000) return `${this.#endTime.toFixed(1)}s`;
-    if (this.#endTime > 1) return `${this.#endTime.toFixed(1)}ms`;
-    return `${this.#endTime.toFixed(1)}µs`;
-  }
+        if (this.#endTime > 1000) return `${this.#endTime.toFixed(1)}s`;
+        if (this.#endTime > 1) return `${this.#endTime.toFixed(1)}ms`;
+        return `${this.#endTime.toFixed(1)}µs`;
+    }
 }

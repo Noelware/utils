@@ -1,6 +1,6 @@
 /*
  * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
- * Copyright (c) 2021-2022 Noelware <team@noelware.org>
+ * Copyright (c) 2021-2023 Noelware <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,43 +23,53 @@
 
 /** Options for the readdir/readdirSync functions. */
 export interface ReaddirOptions {
-  /** A list of extensions to only output. This can be an array of strings or a regular expression. */
-  extensions?: (string | RegExp)[];
+    /** A list of extensions to only output. This can be an array of strings or a regular expression. */
+    extensions?: (string | RegExp)[];
 
-  /** A list of excluded files. This can be an array of strings or a regular expression. */
-  exclude?: (string | RegExp)[];
+    /** A list of excluded files. This can be an array of strings or a regular expression. */
+    exclude?: (string | RegExp)[];
 }
 
 /**
  * Represents a exported file
  */
 export interface Ctor<T> {
-  /**
-   * Constructs a new instance of [T]
-   * @param args Any additional arguments, if any
-   */
-  new (...args: any[]): T;
+    /**
+     * Constructs a new instance of [T]
+     * @param args Any additional arguments, if any
+     */
+    new (...args: any[]): T;
 
-  /**
-   * Returns the default export of [T], if it was a ES module
-   */
-  default?: Ctor<T> & { default: never };
+    /**
+     * Returns the default export of [T], if it was a ES module
+     */
+    default?: Ctor<T> & { default: never };
 }
 
 // Credit: https://github.com/DonovanDMC
+/** @deprecated This has not been used since 2.2, scheduled to be removed in 2.3 */
 export type FilterFlags<Base, Condition> = { [K in keyof Base]: Base[K] extends Condition ? K : never };
+
+/** @deprecated This has not been used since 2.2, scheduled to be removed in 2.3 */
 export type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base];
+
+/** @deprecated This has not been used since 2.2, scheduled to be removed in 2.3 */
 export type FilterOut<Base, Condition> = Pick<Base, keyof Omit<Base, AllowedNames<Base, Condition>>>;
 
-/** Type to omit out `undefined` or `null` */
-export type OmitUndefinedOrNull<T> = FilterOut<T, null | undefined>;
+/**
+ * Type alias to force {@link T} to be non-nullable.
+ *
+ * @deprecated Since 2.2, this type just uses `NonNullable`. This is scheduled
+ * to be removed in 2.3
+ */
+export type OmitUndefinedOrNull<T> = NonNullable<T>;
 
 /** Type alias for getting the return type of a constructor as a type */
 export type ConstructorReturnType<T> = T extends new (...args: any[]) => infer P
-  ? P
-  : T extends Ctor<infer P>
-  ? P
-  : unknown;
+    ? P
+    : T extends Ctor<infer P>
+    ? P
+    : unknown;
 
 /** Nestly make all properties in a object not required */
 export type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]> };
@@ -69,46 +79,63 @@ export type MaybePromise<T> = T | Promise<T>;
 
 /** Nestly make all properties in a object required */
 export type DeepRequired<T> = {
-  [P in keyof T]-?: DeepRequired<T[P]>;
+    [P in keyof T]-?: DeepRequired<T[P]>;
 };
 
 /**
  * Returns all the keys of [T] as the specified [Sep]erator.
+ *
+ * Since 2.2, this will support one-level arrays to be used as `hello.world[1]` as the type and objects
+ * will be resolved as keys. We will probably support nested arrays (i.e, `string[][]`) soon, but
+ * not right now.
+ *
+ * @example
+ * ```ts
+ * import type { ObjectKeysWithSeperator } from '@noelware/utils';
+ *
+ * type Schema = { hello: { world: string[] }, woof: boolean };
+ * type SchemaKeys = ObjectKeysWithSeperator<Schema>;
+ * // 'hello' | `hello.world[${number}]` | 'woof'
+ * ```
  */
 // credit: Ben - https://github.com/Benricheson101
 export type ObjectKeysWithSeperator<
-  T extends Record<string, any>,
-  Sep extends string = '.',
-  Keys extends keyof T = keyof T
+    T extends Record<string, any>,
+    Sep extends string = '.',
+    Keys extends keyof T = keyof T
 > = Keys extends string
-  ? T[Keys] extends any[]
-    ? Keys
-    : T[Keys] extends object
-    ? `${Keys}${Sep}${ObjectKeysWithSeperator<T[Keys], Sep>}`
-    : Keys
-  : never;
+    ? T[Keys] extends (infer U)[]
+        ? U extends Record<string, any>
+            ? `${Keys}[${number}]${ObjectKeysWithSeperator<U[keyof U], Sep>}`
+            : U extends any[]
+            ? `${Keys}[${number}]${ObjectKeysWithSeperator<U, Sep>}`
+            : `${Keys}[${number}]`
+        : T[Keys] extends object
+        ? Keys | `${Keys}${Sep}${ObjectKeysWithSeperator<T[Keys], Sep>}`
+        : Keys
+    : never;
 
 /**
  * Returns all the keys from the [Obj]ect as a seperated object
  */
 // credit: Ben - https://github.com/Benricheson101
 export type KeyToPropType<
-  T extends Record<string, any>,
-  Obj extends ObjectKeysWithSeperator<T, Sep>,
-  Sep extends string = '.'
+    T extends Record<string, any>,
+    Obj extends ObjectKeysWithSeperator<T, Sep>,
+    Sep extends string = '.'
 > = Obj extends `${infer First}${Sep}${infer Rest}`
-  ? KeyToPropType<T[First], Rest extends ObjectKeysWithSeperator<T[First], Sep> ? Rest : never, Sep>
-  : Obj extends `${infer First}`
-  ? T[First]
-  : T;
+    ? KeyToPropType<T[First], Rest extends ObjectKeysWithSeperator<T[First], Sep> ? Rest : never, Sep>
+    : Obj extends `${infer First}`
+    ? T[First]
+    : T;
 
 /**
  * Returns a object from a nested object that can be used
  * for dot notation
  */
 export type DotNotation<T extends Record<string, unknown>, Keys extends string> = KeyToPropType<
-  T,
-  ObjectKeysWithSeperator<T, '.', Keys>
+    T,
+    ObjectKeysWithSeperator<T, '.', Keys>
 >;
 
 /**

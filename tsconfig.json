@@ -1,9 +1,9 @@
 {
-  "extends": "@augu/tsconfig",
-  "compilerOptions": {
-    "outDir": "./build",
-    "isolatedModules": true
-  },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+    "extends": "@augu/tsconfig",
+    "compilerOptions": {
+        "outDir": "./build",
+        "isolatedModules": true
+    },
+    "include": ["**/*.ts"],
+    "exclude": ["node_modules"]
 }

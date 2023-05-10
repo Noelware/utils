@@ -1,6 +1,6 @@
 /*
  * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
- * Copyright (c) 2021-2022 Noelware <team@noelware.org>
+ * Copyright (c) 2021-2023 Noelware <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,8 +40,8 @@ export const noop = () => {};
  * @returns The time in milliseconds
  */
 export function calculateHRTime(start: [seconds: number, nanoseconds: number]) {
-  const difference = process.hrtime(start);
-  return (difference[0] * 1e9 + difference[1]) / 1e6;
+    const difference = process.hrtime(start);
+    return (difference[0] * 1e9 + difference[1]) / 1e6;
 }
 
 /**
@@ -49,7 +49,7 @@ export function calculateHRTime(start: [seconds: number, nanoseconds: number]) {
  * @param duration The duration to sleep on.
  */
 export function sleep(duration: number) {
-  return new Promise<unknown>((resolve) => setTimeout(resolve, duration));
+    return new Promise<unknown>((resolve) => setTimeout(resolve, duration));
 }
 
 /**
@@ -57,20 +57,20 @@ export function sleep(duration: number) {
  * @param obj The object to check
  * @param key The key to check if it exists.
  */
-export function hasOwnProperty<T extends {}, K extends keyof T = keyof T>(obj: T, key: K) {
-  return Object.prototype.hasOwnProperty.call(obj, key);
+export function hasOwnProperty<T extends object, K extends keyof T = keyof T>(obj: T, key: K) {
+    return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
 /**
  * Checks if {@link obj} is a object type. This doesn't return true for arrays or `null`.
  * @param obj The object to check.
  */
-export function isObject<T extends {} = {}>(obj: unknown): obj is T {
-  if (Array.isArray(obj)) return false;
-  if (obj === null) return false;
-  if (typeof obj !== 'object') return false;
+export function isObject<T extends object>(obj: unknown): obj is T {
+    if (Array.isArray(obj)) return false;
+    if (obj === null) return false;
+    if (typeof obj !== 'object') return false;
 
-  return true;
+    return true;
 }
 
 /**
@@ -78,47 +78,50 @@ export function isObject<T extends {} = {}>(obj: unknown): obj is T {
  * @param obj The object to check
  * @param key The key
  * @param defaultValue The default value, if it wasn't found
+ * @deprecated Since 2.2, this method was never used. Scheduled to be removed in 2.3
  */
-export function property<T extends {}, K extends keyof T = keyof T>(obj: T, key: K, defaultValue: T[K]): T[K] {
-  if (!isObject(obj)) return defaultValue;
-  if (!hasOwnProperty(obj, key)) return defaultValue;
-  return obj[key];
+export function property<T extends object, K extends keyof T = keyof T>(obj: T, key: K, defaultValue: T[K]): T[K] {
+    if (!isObject(obj)) return defaultValue;
+    if (!hasOwnProperty(obj, key)) return defaultValue;
+    return obj[key];
 }
 
 /**
  * Helper function to pluralize a number.
  * @param str The string to use when pluralizing the number.
  * @param value The actual number value.
+ * @deprecated Since 2.2, this method was never used. Scheduled to be removed in 2.3
  */
 export function pluralize(str: string, value: number) {
-  if (value === 0) return `${value} ${str}s`;
-  return value >= 1.5 ? `${value} ${str}s` : `${value} ${str}`;
+    if (value === 0) return `${value} ${str}s`;
+    return value >= 1.5 ? `${value} ${str}s` : `${value} ${str}`;
 }
 
 /**
  * Humanizes a duration via {@link ms} and returns the humanized version.
  * @param ms The duration to use
  * @param long If the output should be `$num $duration` (i.e, `1 year`) or not.
+ * @deprecated Since 2.2, this method was never used. Scheduled to be removed in 2.3
  */
 export function humanize(ms: number, long: boolean = false) {
-  const years = Math.floor(ms / 31104000000);
-  const months = Math.floor((ms / 2592000000) % 12);
-  const weeks = Math.floor((ms / 604800000) % 7);
-  const days = Math.floor((ms / 86400000) % 30);
-  const hours = Math.floor((ms / 3600000) % 24);
-  const minutes = Math.floor((ms / 60000) % 60);
-  const seconds = Math.floor((ms / 1000) % 60);
+    const years = Math.floor(ms / 31104000000);
+    const months = Math.floor((ms / 2592000000) % 12);
+    const weeks = Math.floor((ms / 604800000) % 7);
+    const days = Math.floor((ms / 86400000) % 30);
+    const hours = Math.floor((ms / 3600000) % 24);
+    const minutes = Math.floor((ms / 60000) % 60);
+    const seconds = Math.floor((ms / 1000) % 60);
 
-  const strings: string[] = [];
-  if (years > 0) strings.push(long ? pluralize('year', years) : `${years}y`);
-  if (months > 0) strings.push(long ? pluralize('month', months) : `${months}mo`);
-  if (weeks > 0) strings.push(long ? pluralize('week', weeks) : `${weeks}w`);
-  if (days > 0) strings.push(long ? pluralize('day', days) : `${days}d`);
-  if (hours > 0) strings.push(long ? pluralize('hour', hours) : `${hours}h`);
-  if (minutes > 0) strings.push(long ? pluralize('minute', minutes) : `${minutes}m`);
-  if (seconds > 0) strings.push(long ? pluralize('second', seconds) : `${seconds}s`);
+    const strings: string[] = [];
+    if (years > 0) strings.push(long ? pluralize('year', years) : `${years}y`);
+    if (months > 0) strings.push(long ? pluralize('month', months) : `${months}mo`);
+    if (weeks > 0) strings.push(long ? pluralize('week', weeks) : `${weeks}w`);
+    if (days > 0) strings.push(long ? pluralize('day', days) : `${days}d`);
+    if (hours > 0) strings.push(long ? pluralize('hour', hours) : `${hours}h`);
+    if (minutes > 0) strings.push(long ? pluralize('minute', minutes) : `${minutes}m`);
+    if (seconds > 0) strings.push(long ? pluralize('second', seconds) : `${seconds}s`);
 
-  return strings.filter(Boolean).join(long ? ', ' : '');
+    return strings.filter(Boolean).join(long ? ', ' : '');
 }
 
 /**
@@ -129,10 +132,10 @@ export function humanize(ms: number, long: boolean = false) {
  * @param delim The delimiter to split, defaults to a space.
  */
 export function titleCase(text: string, delim: string = ' ') {
-  return text
-    .split(delim)
-    .map((t) => `${t.charAt(0).toUpperCase()}${t.slice(1)}`)
-    .join(' ');
+    return text
+        .split(delim)
+        .map((t) => `${t.charAt(0).toUpperCase()}${t.slice(1)}`)
+        .join(' ');
 }
 
 /**
@@ -141,8 +144,8 @@ export function titleCase(text: string, delim: string = ' ') {
  * @param predicate The predicate function to check if it can be excluded.
  */
 export function shouldExclude<T>(data: T[], predicate: (item: T) => boolean) {
-  if (!data.length) return false;
-  return data.some(predicate);
+    if (!data.length) return false;
+    return data.some(predicate);
 }
 
 /**
@@ -153,17 +156,17 @@ export function shouldExclude<T>(data: T[], predicate: (item: T) => boolean) {
  * @returns The module as {@link T}.
  */
 export function tryRequire<T>(mod: string): T {
-  try {
-    if (cachedModules.has(mod)) return cachedModules.get(mod) as unknown as T;
-    const m = require(mod);
+    try {
+        if (cachedModules.has(mod)) return cachedModules.get(mod) as unknown as T;
+        const m = require(mod);
 
-    cachedModules.set(mod, m);
-    return m;
-  } catch (e) {
-    assertIsError(e);
+        cachedModules.set(mod, m);
+        return m;
+    } catch (e) {
+        assertIsError(e);
 
-    throw new Error(`Module "${mod}" was not found. Did you install it?`, { cause: e });
-  }
+        throw new Error(`Module "${mod}" was not found. Did you install it?`, { cause: e });
+    }
 }
 
 /**
@@ -173,61 +176,61 @@ export function tryRequire<T>(mod: string): T {
  * @returns A list of files if in a Node.js environment, otherwise an empty array if in a browser context.
  */
 export function readdirSync(path: string, options: ReaddirOptions = {}) {
-  // If it is the browser, this will be a empty array since you can't read directories.
-  if (isBrowser) return [];
+    // If it is the browser, this will be a empty array since you can't read directories.
+    if (isBrowser) return [];
 
-  const extensions = property(options, 'extensions', []) ?? [];
-  const excluded = property(options, 'exclude', []) ?? [];
+    const extensions = property(options, 'extensions', []) ?? [];
+    const excluded = property(options, 'exclude', []) ?? [];
 
-  let results: string[] = [];
-  const fs = tryRequire<typeof import('fs')>('fs');
-  const { join } = tryRequire<typeof import('path')>('path');
-  const excludePredicate = (file: import('fs').Dirent) => (item: string | RegExp) => {
-    if (typeof item === 'string') return item === file.name;
-    return item.test(file.name);
-  };
+    let results: string[] = [];
+    const fs = tryRequire<typeof import('fs')>('fs');
+    const { join } = tryRequire<typeof import('path')>('path');
+    const excludePredicate = (file: import('fs').Dirent) => (item: string | RegExp) => {
+        if (typeof item === 'string') return item === file.name;
+        return item.test(file.name);
+    };
 
-  const files = fs.readdirSync(path, { withFileTypes: true });
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const fullPath = join(path, file.name);
+    const files = fs.readdirSync(path, { withFileTypes: true });
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fullPath = join(path, file.name);
 
-    const stat = fs.statSync(fullPath);
-    const isFile = stat.isFile() || stat.isFIFO();
-    if (isFile) {
-      if (shouldExclude(excluded, excludePredicate(file))) continue;
-      if (shouldExclude(extensions, excludePredicate(file))) continue;
+        const stat = fs.statSync(fullPath);
+        const isFile = stat.isFile() || stat.isFIFO();
+        if (isFile) {
+            if (shouldExclude(excluded, excludePredicate(file))) continue;
+            if (shouldExclude(extensions, excludePredicate(file))) continue;
 
-      results.push(fullPath);
-    } else {
-      if (shouldExclude(excluded, excludePredicate(file))) continue;
-      if (shouldExclude(extensions, excludePredicate(file))) continue;
+            results.push(fullPath);
+        } else {
+            if (shouldExclude(excluded, excludePredicate(file))) continue;
+            if (shouldExclude(extensions, excludePredicate(file))) continue;
 
-      results = results.concat(...readdirSync(fullPath, options));
+            results = results.concat(...readdirSync(fullPath, options));
+        }
     }
-  }
 
-  return results;
+    return results;
 }
 
 export function readdir(path: string, options: ReaddirOptions = {}) {
-  // If it is the browser, this will be a empty array since you can't read directories.
-  if (isBrowser) return Promise.resolve([]);
-  return new Promise<string[]>((resolve) => {
-    const results = readdirSync(path, options);
-    resolve(results);
-  });
+    // If it is the browser, this will be a empty array since you can't read directories.
+    if (isBrowser) return Promise.resolve([]);
+    return new Promise<string[]>((resolve) => {
+        const results = readdirSync(path, options);
+        resolve(results);
+    });
 }
 
 export function omitUndefinedOrNull<T extends object>(obj: T) {
-  return Object.keys(obj).reduce<OmitUndefinedOrNull<T>>((acc, curr) => {
-    if (obj[curr] === undefined || obj[curr] === null) return acc;
+    return Object.keys(obj).reduce<OmitUndefinedOrNull<T>>((acc, curr) => {
+        if (obj[curr] === undefined || obj[curr] === null) return acc;
 
-    acc[curr] = obj[curr];
-    return acc;
-  }, {} as OmitUndefinedOrNull<T>);
+        acc[curr] = obj[curr];
+        return acc;
+    }, {} as OmitUndefinedOrNull<T>);
 }
 
 export function assertIsError<E extends Error = Error>(value: unknown): asserts value is E {
-  if (!(value instanceof Error)) throw new Error(`Value was not \`Error\`.`);
+    if (!(value instanceof Error)) throw new Error(`Value was not \`Error\`.`);
 }

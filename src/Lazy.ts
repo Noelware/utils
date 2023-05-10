@@ -1,6 +1,6 @@
 /*
  * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
- * Copyright (c) 2021-2022 Noelware <team@noelware.org>
+ * Copyright (c) 2021-2023 Noelware <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,18 +22,18 @@
  */
 
 export function lazy<T>(func: () => T): Lazy<T> {
-  return new Lazy(func);
+    return new Lazy(func);
 }
 
 export class Lazy<T> {
-  #cached: T | undefined = undefined;
-  #func: () => T;
+    #cached: T | undefined = undefined;
+    #func: () => T;
 
-  constructor(func: () => T) {
-    this.#func = func;
-  }
+    constructor(func: () => T) {
+        this.#func = func;
+    }
 
-  get() {
-    return this.#cached !== undefined ? this.#cached : (this.#cached = this.#func.call(this));
-  }
+    get() {
+        return this.#cached !== undefined ? this.#cached : (this.#cached = this.#func.call(this));
+    }
 }

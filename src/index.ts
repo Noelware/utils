@@ -1,6 +1,6 @@
 /*
  * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
- * Copyright (c) 2021-2022 Noelware <team@noelware.org>
+ * Copyright (c) 2021-2023 Noelware <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,31 @@
  */
 
 export type {
-  ReaddirOptions,
-  AllowedNames,
-  ConstructorReturnType,
-  Ctor,
-  DecoupleArray,
-  DeepPartial,
-  DeepRequired,
-  DotNotation,
-  FilterFlags,
-  FilterOut,
-  KeyToPropType,
-  MaybePromise,
-  ObjectKeysWithSeperator,
-  OmitUndefinedOrNull
+    ReaddirOptions,
+    AllowedNames,
+    ConstructorReturnType,
+    Ctor,
+    DecoupleArray,
+    DeepPartial,
+    DeepRequired,
+    DotNotation,
+    FilterFlags,
+    FilterOut,
+    KeyToPropType,
+    MaybePromise,
+    ObjectKeysWithSeperator,
+    OmitUndefinedOrNull
 } from './types';
 
 export * from './constants';
 export * from './functions';
 export {
-  EventBus,
-  type EventEmitterLike,
-  type GenericEventBusMap,
-  type ExtractListenerArguments,
-  type Listener,
-  isEventEmitterLike
+    EventBus,
+    type EventEmitterLike,
+    type GenericEventBusMap,
+    type ExtractListenerArguments,
+    type Listener,
+    isEventEmitterLike
 } from './EventBus';
 
 export { Stopwatch } from './Stopwatch';

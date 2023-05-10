@@ -24,22 +24,22 @@
 const { build } = require('tsup');
 
 const main = async () => {
-  console.log('[@noelware/utils] building library...');
-  await build({
-    bundle: true,
-    clean: true,
-    dts: true,
-    outDir: './dist',
-    entry: ['./src/index.ts'],
-    name: 'utils',
-    sourcemap: true,
-    treeshake: true
-  });
+    console.log('[@noelware/utils] building library...');
+    await build({
+        bundle: true,
+        clean: true,
+        dts: true,
+        outDir: './dist',
+        entry: ['./src/index.ts'],
+        name: 'utils',
+        sourcemap: true,
+        treeshake: true
+    });
 
-  console.log('[@noelware/utils] done~ ^-^');
+    console.log('[@noelware/utils] done~ ^-^');
 };
 
 main().catch((ex) => {
-  console.error(ex);
-  process.exit(1);
+    console.error(ex);
+    process.exit(1);
 });
