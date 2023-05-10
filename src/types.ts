@@ -1,6 +1,6 @@
 /*
  * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
- * Copyright (c) 2021-2023 Noelware <team@noelware.org>
+ * Copyright (c) 2021-2022 Noelware <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -95,7 +95,7 @@ export type DeepRequired<T> = {
  *
  * type Schema = { hello: { world: string[] }, woof: boolean };
  * type SchemaKeys = ObjectKeysWithSeperator<Schema>;
- * // 'hello' | `hello.world[${number}]` | 'woof'
+ * // 'hello.world' | 'woof'
  * ```
  */
 // credit: Ben - https://github.com/Benricheson101
@@ -104,14 +104,10 @@ export type ObjectKeysWithSeperator<
     Sep extends string = '.',
     Keys extends keyof T = keyof T
 > = Keys extends string
-    ? T[Keys] extends (infer U)[]
-        ? U extends Record<string, any>
-            ? `${Keys}[${number}]${ObjectKeysWithSeperator<U[keyof U], Sep>}`
-            : U extends any[]
-            ? `${Keys}[${number}]${ObjectKeysWithSeperator<U, Sep>}`
-            : `${Keys}[${number}]`
+    ? T[Keys] extends any[]
+        ? Keys
         : T[Keys] extends object
-        ? Keys | `${Keys}${Sep}${ObjectKeysWithSeperator<T[Keys], Sep>}`
+        ? `${Keys}${Sep}${ObjectKeysWithSeperator<T[Keys], Sep>}`
         : Keys
     : never;
 
