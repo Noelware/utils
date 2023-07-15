@@ -72,7 +72,7 @@ describe('EventBus', () => {
             emitted = true;
         });
 
-        eventBus!.emit('owo');
+        eventBus.emit('owo');
         expect(emitted).toBeTruthy();
     });
 
@@ -83,8 +83,8 @@ describe('EventBus', () => {
             });
         }
 
-        expect(eventBus!.size()).toBe(1);
-        expect(eventBus!.size('owo')).toBe(100);
+        expect(eventBus.size()).toBe(1);
+        expect(eventBus.size('owo')).toBe(100);
     });
 
     test('should be no listeners with `once` method', () => {
