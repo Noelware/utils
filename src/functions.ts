@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-import type { OmitUndefinedOrNull, ReaddirOptions } from './types';
+import type { ReaddirOptions } from './types';
 import { isBrowser } from './constants';
 
 let cachedModules = new Map<string, object>();
@@ -71,19 +71,6 @@ export function isObject<T extends object>(obj: unknown): obj is T {
     if (typeof obj !== 'object') return false;
 
     return true;
-}
-
-/**
- * Returns the property if it's found in a {@link object obj}, otherwise it defaults to the {@link default defaultValue}.
- * @param obj The object to check
- * @param key The key
- * @param defaultValue The default value, if it wasn't found
- * @deprecated Since 2.2, this method was never used. Scheduled to be removed in 2.3
- */
-export function property<T extends object, K extends keyof T = keyof T>(obj: T, key: K, defaultValue: T[K]): T[K] {
-    if (!isObject(obj)) return defaultValue;
-    if (!hasOwnProperty(obj, key)) return defaultValue;
-    return obj[key];
 }
 
 /**
@@ -179,8 +166,8 @@ export function readdirSync(path: string, options: ReaddirOptions = {}) {
     // If it is the browser, this will be a empty array since you can't read directories.
     if (isBrowser) return [];
 
-    const extensions = property(options, 'extensions', []) ?? [];
-    const excluded = property(options, 'exclude', []) ?? [];
+    const extensions = hasOwnProperty(options, 'extensions') ? options.extensions || [] : [];
+    const excluded = hasOwnProperty(options, 'exclude') ? options.exclude || [] : [];
 
     let results: string[] = [];
     const fs = tryRequire<typeof import('fs')>('fs');
@@ -223,12 +210,12 @@ export function readdir(path: string, options: ReaddirOptions = {}) {
 }
 
 export function omitUndefinedOrNull<T extends object>(obj: T) {
-    return Object.keys(obj).reduce<OmitUndefinedOrNull<T>>((acc, curr) => {
+    return Object.keys(obj).reduce<NonNullable<T>>((acc, curr) => {
         if (obj[curr] === undefined || obj[curr] === null) return acc;
 
         acc[curr] = obj[curr];
         return acc;
-    }, {} as OmitUndefinedOrNull<T>);
+    }, {} as NonNullable<T>);
 }
 
 export function assertIsError<E extends Error = Error>(value: unknown): asserts value is E {

@@ -23,19 +23,15 @@
 
 export type {
     ReaddirOptions,
-    AllowedNames,
     ConstructorReturnType,
     Ctor,
     DecoupleArray,
     DeepPartial,
     DeepRequired,
     DotNotation,
-    FilterFlags,
-    FilterOut,
     KeyToPropType,
     MaybePromise,
-    ObjectKeysWithSeperator,
-    OmitUndefinedOrNull
+    ObjectKeysWithSeperator
 } from './types';
 
 export * from './constants';
@@ -49,5 +45,5 @@ export {
     isEventEmitterLike
 } from './EventBus';
 
+export { Lazy, lazy } from './Lazy';
 export { Stopwatch } from './Stopwatch';
-export { Lazy } from './Lazy';

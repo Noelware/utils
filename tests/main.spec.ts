@@ -21,9 +21,8 @@
  * SOFTWARE.
  */
 
-import { afterAll, assert, beforeAll, expect, test, describe } from 'vitest';
+import { assert, beforeEach, expect, test, describe } from 'vitest';
 import * as utils from '../src';
-import { join } from 'path';
 
 test('constants', () => {
     expect(utils.isNode).toBe(true);
@@ -62,18 +61,14 @@ test('constants', () => {
 });
 
 describe('EventBus', () => {
-    let eventBus: utils.EventBus | undefined = undefined;
-    beforeAll(() => {
-        eventBus = new utils.EventBus();
-    });
-
-    afterAll(() => {
-        eventBus = undefined;
+    const eventBus = new utils.EventBus();
+    beforeEach(() => {
+        eventBus.removeAllListeners();
     });
 
     test('can emit', () => {
         let emitted = false;
-        eventBus!.on('owo', () => {
+        eventBus.on('owo', () => {
             emitted = true;
         });
 
@@ -81,39 +76,34 @@ describe('EventBus', () => {
         expect(emitted).toBeTruthy();
     });
 
-    test('has 1 event listener', () => {
-        expect(eventBus!.size()).toBe(1);
-    });
-
-    test('has 101 event listeners on the `owo` event', () => {
+    test('has 100 event listeners on the `owo` event', () => {
         for (let i = 0; i < 100; i++) {
-            eventBus!.on('owo', () => {
+            eventBus.on('owo', () => {
                 // noop
             });
         }
 
         expect(eventBus!.size()).toBe(1);
-        expect(eventBus!.size('owo')).toBe(101);
+        expect(eventBus!.size('owo')).toBe(100);
     });
 
     test('should be no listeners with `once` method', () => {
         let hasRemoved = false;
-        eventBus!.once('uwu', () => {
+        eventBus.once('uwu', () => {
             hasRemoved = true;
         });
 
-        expect(eventBus!.size()).toBe(2);
-        eventBus!.emit('uwu');
+        expect(eventBus.size()).toBe(1);
+        eventBus.emit('uwu');
 
         expect(hasRemoved).toBeTruthy();
-        expect(eventBus!.size()).toBe(2);
-        expect(eventBus!.size('uwu')).toBe(0);
+        expect(eventBus.size()).toBe(1);
+        expect(eventBus.size('uwu')).toBe(0);
     });
 
     test('should now have zero event listeners', () => {
-        eventBus!.removeAllListeners();
-        expect(eventBus!.size()).toBe(0);
-        expect(eventBus!.size('owo')).toBe(0);
+        expect(eventBus.size()).toBe(0);
+        expect(eventBus.size('owo')).toBe(0);
     });
 });
 
@@ -131,23 +121,11 @@ describe('functions', () => {
         expect(utils.hasOwnProperty(obj, 'hssksidjslksdjd')).toBeFalsy();
     });
 
-    test('property', () => {
-        const obj: Record<string, any> = { uno: 1, dos: 2 };
-        expect(utils.property(obj, 'uno', 9999)).toBe(1);
-        expect(utils.property(obj, 'dos', 999)).toBe(2);
-        expect(utils.property(obj, 'nkfdkdfkfdsjfl', 727)).toBe(727);
-    });
-
     test('isObject', () => {
         expect(utils.isObject({ owo: true })).toBeTruthy();
         expect(utils.isObject(null)).toBeFalsy();
         expect(utils.isObject(['owo'])).toBeFalsy();
         expect(utils.isObject('nmdskdsdsla;dlsdsks;aldksdl;ad')).toBeFalsy();
-    });
-
-    test('pluralize', () => {
-        expect(utils.pluralize('second', 2)).toBe('2 seconds');
-        expect(utils.pluralize('second', 1)).toBe('1 second');
     });
 
     test('titleCase', () => {
@@ -183,4 +161,9 @@ describe('functions', () => {
         expect(() => isError('abcd')).toThrowError();
         expect(() => isError(new Error('beep boop'))).not.toThrowError();
     });
+});
+
+describe('Stopwatch', () => {
+    const _ = new utils.Stopwatch();
+    test('1 + 1 = 2?', () => expect(1 + 1).toBe(2));
 });

@@ -21,10 +21,28 @@
  * SOFTWARE.
  */
 
+/**
+ * Creates a new {@link Lazy} object from a function.
+ * @param func The lazy function.
+ * @returns A {@link Lazy} object.
+ */
 export function lazy<T>(func: () => T): Lazy<T> {
     return new Lazy(func);
 }
 
+/**
+ * Represents a state object to calculate something in a function
+ * lazily and return the same output each time.
+ *
+ * ## Example
+ * ```ts
+ * import { lazy } from '@noelware/utils';
+ *
+ * const myExpensiveFunc = lazy(() => 42);
+ * console.log(myExpensiveFunc.get()); // => 42
+ * console.log(myExpensiveFunc.get()); // => 42
+ * ```
+ */
 export class Lazy<T> {
     #cached: T | undefined = undefined;
     #func: () => T;

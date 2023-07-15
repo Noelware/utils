@@ -46,24 +46,6 @@ export interface Ctor<T> {
     default?: Ctor<T> & { default: never };
 }
 
-// Credit: https://github.com/DonovanDMC
-/** @deprecated This has not been used since 2.2, scheduled to be removed in 2.3 */
-export type FilterFlags<Base, Condition> = { [K in keyof Base]: Base[K] extends Condition ? K : never };
-
-/** @deprecated This has not been used since 2.2, scheduled to be removed in 2.3 */
-export type AllowedNames<Base, Condition> = FilterFlags<Base, Condition>[keyof Base];
-
-/** @deprecated This has not been used since 2.2, scheduled to be removed in 2.3 */
-export type FilterOut<Base, Condition> = Pick<Base, keyof Omit<Base, AllowedNames<Base, Condition>>>;
-
-/**
- * Type alias to force {@link T} to be non-nullable.
- *
- * @deprecated Since 2.2, this type just uses `NonNullable`. This is scheduled
- * to be removed in 2.3
- */
-export type OmitUndefinedOrNull<T> = NonNullable<T>;
-
 /** Type alias for getting the return type of a constructor as a type */
 export type ConstructorReturnType<T> = T extends new (...args: any[]) => infer P
     ? P

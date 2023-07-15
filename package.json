@@ -1,7 +1,7 @@
 {
     "name": "@noelware/utils",
     "description": "🌸 Extra utilities to keep code consist and non-repetitive.",
-    "version": "2.3.0",
+    "version": "2.4.0",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "author": "Noel Towa <cutie@floofy.dev>, Noelware Team <team@noelware.org>",
