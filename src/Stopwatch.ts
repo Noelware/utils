@@ -142,6 +142,7 @@ export class Stopwatch {
         }
 
         this.#endTime = this.#now() - this.#startTime!;
+        this.#currentState = 'ENDED';
 
         if (this.#endTime > 1000) return `${this.#endTime.toFixed(1)}s`;
         if (this.#endTime > 1) return `${this.#endTime.toFixed(1)}ms`;
