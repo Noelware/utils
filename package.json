@@ -27,7 +27,7 @@
         "fmt": "prettier --write ./.prettierrc.json **/*.{ts,js,yaml,yml,json,md}"
     },
     "devDependencies": {
-        "@augu/eslint-config": "4.0.1",
+        "@augu/eslint-config": "5.0.0",
         "@augu/tsconfig": "1.2.0",
         "@types/node": "20.10.4",
         "@typescript-eslint/eslint-plugin": "6.14.0",
