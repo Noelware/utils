@@ -9,7 +9,7 @@
     "repository": "https://github.com/Noelware/utils",
     "bugs": "https://github.com/Noelware/utils/issues",
     "homepage": "https://docs.noelware.org/libraries/@noelware/utils",
-    "packageManager": "yarn@3.8.0",
+    "packageManager": "yarn@4.1.0",
     "files": [
         "dist/"
     ],
