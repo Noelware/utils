@@ -1,6 +1,6 @@
 /*
  * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
- * Copyright (c) 2021-2022 Noelware <team@noelware.org>
+ * Copyright (c) 2021-2024 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,10 +21,15 @@
  * SOFTWARE.
  */
 
-import { defineConfig } from 'vitest/config';
+import config from '@augu/eslint-config';
+import { fileURLToPath } from 'url';
 
-export default defineConfig({
-    test: {
-        dir: 'tests'
+/** @type {import('@augu/eslint-config').default} */
+const noel = typeof Bun !== 'undefined' ? config : config.default;
+
+export default noel({
+    perfectionist: true,
+    typescript: {
+        tsconfig: fileURLToPath(new URL('tsconfig.json', import.meta.url))
     }
 });

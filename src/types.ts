@@ -1,6 +1,6 @@
 /*
  * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
- * Copyright (c) 2021-2023 Noelware <team@noelware.org>
+ * Copyright (c) 2021-2024 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,10 @@
  * SOFTWARE.
  */
 
-/** Options for the readdir/readdirSync functions. */
+/**
+ * Options for the readdir/readdirSync functions.
+ * @deprecated (since 2.5.0): this is no longer used
+ */
 export interface ReaddirOptions {
     /** A list of extensions to only output. This can be an array of strings or a regular expression. */
     extensions?: (string | RegExp)[];
@@ -32,6 +35,7 @@ export interface ReaddirOptions {
 
 /**
  * Represents a exported file
+ * @deprecated (since 2.5.0): this is no longer used
  */
 export interface Ctor<T> {
     /**
@@ -46,17 +50,20 @@ export interface Ctor<T> {
     default?: Ctor<T> & { default: never };
 }
 
-/** Type alias for getting the return type of a constructor as a type */
+/**
+ * Type alias for getting the return type of a constructor as a type
+ * @deprecated (since 2.5.0): this is no longer used
+ */
 export type ConstructorReturnType<T> = T extends new (...args: any[]) => infer P
     ? P
     : T extends Ctor<infer P>
-    ? P
-    : unknown;
+      ? P
+      : unknown;
 
 /** Nestly make all properties in a object not required */
 export type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]> };
 
-/** Represents [[T]] as a Promise or not. */
+/** Represents `T` as a Promise or not. */
 export type MaybePromise<T> = T | Promise<T>;
 
 /** Nestly make all properties in a object required */
@@ -71,6 +78,7 @@ export type DeepRequired<T> = {
  * will be resolved as keys. We will probably support nested arrays (i.e, `string[][]`) soon, but
  * not right now.
  *
+ * @deprecated (since 2.5.0): this is no longer used
  * @example
  * ```ts
  * import type { ObjectKeysWithSeperator } from '@noelware/utils';
@@ -89,12 +97,13 @@ export type ObjectKeysWithSeperator<
     ? T[Keys] extends any[]
         ? Keys
         : T[Keys] extends object
-        ? `${Keys}${Sep}${ObjectKeysWithSeperator<T[Keys], Sep>}`
-        : Keys
+          ? `${Keys}${Sep}${ObjectKeysWithSeperator<T[Keys], Sep>}`
+          : Keys
     : never;
 
 /**
  * Returns all the keys from the [Obj]ect as a seperated object
+ * @deprecated (since 2.5.0): this is no longer used
  */
 // credit: Ben - https://github.com/Benricheson101
 export type KeyToPropType<
@@ -104,12 +113,13 @@ export type KeyToPropType<
 > = Obj extends `${infer First}${Sep}${infer Rest}`
     ? KeyToPropType<T[First], Rest extends ObjectKeysWithSeperator<T[First], Sep> ? Rest : never, Sep>
     : Obj extends `${infer First}`
-    ? T[First]
-    : T;
+      ? T[First]
+      : T;
 
 /**
  * Returns a object from a nested object that can be used
  * for dot notation
+ * @deprecated (since 2.5.0): this is no longer used
  */
 export type DotNotation<T extends Record<string, unknown>, Keys extends string> = KeyToPropType<
     T,
@@ -122,3 +132,11 @@ export type DotNotation<T extends Record<string, unknown>, Keys extends string> 
  */
 // eslint-disable-next-line
 export type DecoupleArray<T> = T extends Array<infer U> ? U : never;
+
+/**
+ * Decouples an Promise's type from {@link __T__}. Returns the inferred
+ * type or `never` if it's not an Promise.
+ *
+ * @since 2.5.0
+ */
+export type DecouplePromise<T> = T extends Promise<infer U> ? U : never;

@@ -1,6 +1,6 @@
 /*
  * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
- * Copyright (c) 2021-2023 Noelware <team@noelware.org>
+ * Copyright (c) 2021-2024 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,15 +21,25 @@
  * SOFTWARE.
  */
 
-/** Represents a generic listener function. */
+/**
+ * Represents a generic listener function.
+ * @deprecated (since 2.5.0): this is no longer used
+ */
 export type Listener = (...args: unknown[]) => void;
 
-/** Extracts the arguments of a specific {@link Listener}. */
+/**
+ * Extracts the arguments of a specific {@link Listener}.
+ * @deprecated (since 2.5.0): this is no longer used
+ */
 export type ExtractListenerArguments<L> = L extends Listener ? Parameters<L> : any[];
 
-/** Represents a generic definition of the type-safe events in a {@link EventBus}. */
+/**
+ * Represents a generic definition of the type-safe events in a {@link EventBus}.
+ * @deprecated (since 2.5.0): this is no longer used
+ */
 export type GenericEventBusMap = Record<string, Listener>;
 
+/** @deprecated (since 2.5.0): this is no longer used */
 export interface EventEmitterLike {
     addListener(event: string, listener: (...args: any[]) => void): any;
     emit(event: string, ...args: unknown[]): any;
@@ -40,6 +50,7 @@ export interface EventEmitterLike {
 /**
  * Checks if {@link emitter} is a event emitter or not.
  * @param emitter The unknown property.
+ * @deprecated (since 2.5.0): this is no longer used
  * @returns Asserts that {@link emitter} is {@link EventEmitterLike}.
  */
 export function isEventEmitterLike<T extends EventEmitterLike>(emitter: unknown): emitter is T {
@@ -56,6 +67,7 @@ export function isEventEmitterLike<T extends EventEmitterLike>(emitter: unknown)
 
 /**
  * Represents an extended event emitter.
+ * @deprecated (since 2.5.0): this is no longer used
  */
 export class EventBus<Map extends object = GenericEventBusMap> {
     ['constructor']!: typeof EventBus;

@@ -1,6 +1,6 @@
 /*
  * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
- * Copyright (c) 2021-2023 Noelware <team@noelware.org>
+ * Copyright (c) 2021-2024 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,6 +47,7 @@ export function calculateHRTime(start: [seconds: number, nanoseconds: number]) {
 /**
  * Sleeps on the current promise for a specific amount of time.
  * @param duration The duration to sleep on.
+ * @deprecated (since 2.5.0): this is not used at all
  */
 export function sleep(duration: number) {
     return new Promise<unknown>((resolve) => setTimeout(resolve, duration));
@@ -74,49 +75,12 @@ export function isObject<T extends object>(obj: unknown): obj is T {
 }
 
 /**
- * Helper function to pluralize a number.
- * @param str The string to use when pluralizing the number.
- * @param value The actual number value.
- * @deprecated Since 2.2, this method was never used. Scheduled to be removed in 2.3
- */
-export function pluralize(str: string, value: number) {
-    if (value === 0) return `${value} ${str}s`;
-    return value >= 1.5 ? `${value} ${str}s` : `${value} ${str}`;
-}
-
-/**
- * Humanizes a duration via {@link ms} and returns the humanized version.
- * @param ms The duration to use
- * @param long If the output should be `$num $duration` (i.e, `1 year`) or not.
- * @deprecated Since 2.2, this method was never used. Scheduled to be removed in 2.3
- */
-export function humanize(ms: number, long: boolean = false) {
-    const years = Math.floor(ms / 31104000000);
-    const months = Math.floor((ms / 2592000000) % 12);
-    const weeks = Math.floor((ms / 604800000) % 7);
-    const days = Math.floor((ms / 86400000) % 30);
-    const hours = Math.floor((ms / 3600000) % 24);
-    const minutes = Math.floor((ms / 60000) % 60);
-    const seconds = Math.floor((ms / 1000) % 60);
-
-    const strings: string[] = [];
-    if (years > 0) strings.push(long ? pluralize('year', years) : `${years}y`);
-    if (months > 0) strings.push(long ? pluralize('month', months) : `${months}mo`);
-    if (weeks > 0) strings.push(long ? pluralize('week', weeks) : `${weeks}w`);
-    if (days > 0) strings.push(long ? pluralize('day', days) : `${days}d`);
-    if (hours > 0) strings.push(long ? pluralize('hour', hours) : `${hours}h`);
-    if (minutes > 0) strings.push(long ? pluralize('minute', minutes) : `${minutes}m`);
-    if (seconds > 0) strings.push(long ? pluralize('second', seconds) : `${seconds}s`);
-
-    return strings.filter(Boolean).join(long ? ', ' : '');
-}
-
-/**
  * Manipulates a string's text with the first letter being uppercase and the rest
  * being untouched.
  *
  * @param text The text to use
  * @param delim The delimiter to split, defaults to a space.
+ * @deprecated (since 2.5.0): this is not used at all
  */
 export function titleCase(text: string, delim: string = ' ') {
     return text
@@ -127,8 +91,10 @@ export function titleCase(text: string, delim: string = ' ') {
 
 /**
  * Checks if the item in the data can be excluded via a predicate function.
+ *
  * @param data The data array to use
  * @param predicate The predicate function to check if it can be excluded.
+ * @deprecated (since 2.5.0): this is not used at all
  */
 export function shouldExclude<T>(data: T[], predicate: (item: T) => boolean) {
     if (!data.length) return false;
@@ -140,6 +106,7 @@ export function shouldExclude<T>(data: T[], predicate: (item: T) => boolean) {
  * if the module was already lazily evaluated.
  *
  * @param mod The module to evaluate
+ * @deprecated (since 2.5.0): this is no longer needed
  * @returns The module as {@link T}.
  */
 export function tryRequire<T>(mod: string): T {
@@ -157,9 +124,12 @@ export function tryRequire<T>(mod: string): T {
 }
 
 /**
- * Reads a directory's contents and returns the contents and the subdirectories' children.
+ * Recursively get files from multiple directories asynchronously. Use the {@link readdir `readdir`}
+ * method to do it asynchronously.
+ *
  * @param path The path to look for, this can be relative or absolute.
- * @param options The {@link ReaddirOptions} options to use, if needed.
+ * @param options options to configure the output of received file paths.
+ * @deprecated (since 2.5.0): please use `node:fs`'s `readdirSync` method instead.
  * @returns A list of files if in a Node.js environment, otherwise an empty array if in a browser context.
  */
 export function readdirSync(path: string, options: ReaddirOptions = {}) {
@@ -200,6 +170,15 @@ export function readdirSync(path: string, options: ReaddirOptions = {}) {
     return results;
 }
 
+/**
+ * Recursively get files from multiple directories asynchronously. Use the {@link readdirSync `readdirSync`}
+ * method to do it synchronously.
+ *
+ * @param path The root path to locate files from
+ * @param options options to configure the output of received file paths.
+ * @deprecated (since 2.5.0): Please use `node:fs/promises`'s `readdir` method instead.
+ * @returns an array of absolute file paths.
+ */
 export function readdir(path: string, options: ReaddirOptions = {}) {
     // If it is the browser, this will be a empty array since you can't read directories.
     if (isBrowser) return Promise.resolve([]);
@@ -209,6 +188,29 @@ export function readdir(path: string, options: ReaddirOptions = {}) {
     });
 }
 
+/**
+ * Omits `undefined` or `null` values from a object. This doesn't do deep omitting,
+ * it will only do it at the first level.
+ *
+ * ## Example
+ * ```ts
+ * import { omitUndefinedOrNull } from '@noelware/utils';
+ *
+ * omitUndefinedOrNull({
+ *   a: 1,
+ *   b: undefined,
+ *   c: {
+ *     a: 1,
+ *     b: undefined
+ *   }
+ * });
+ *
+ * // => { a: 1, c: { a: 1, b: undefined } }
+ * ```
+ *
+ * @param obj The object itself
+ * @returns A new object formed with the key-value pairs containing no `undefined`/`null` values.
+ */
 export function omitUndefinedOrNull<T extends object>(obj: T) {
     return Object.keys(obj).reduce<NonNullable<T>>((acc, curr) => {
         if (obj[curr] === undefined || obj[curr] === null) return acc;
@@ -218,6 +220,12 @@ export function omitUndefinedOrNull<T extends object>(obj: T) {
     }, {} as NonNullable<T>);
 }
 
+/**
+ * Does an assertion that `value` is an {@link Error `Error`}. It will throw a hard error
+ * if `value` is not an instance of {@link Error `Error`}.
+ *
+ * @param value value given
+ */
 export function assertIsError<E extends Error = Error>(value: unknown): asserts value is E {
-    if (!(value instanceof Error)) throw new Error(`Value was not \`Error\`.`);
+    if (!(value instanceof Error)) throw new Error(`Value was not \`Error\``);
 }

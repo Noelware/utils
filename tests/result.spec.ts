@@ -1,6 +1,6 @@
 /*
  * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
- * Copyright (c) 2021-2023 Noelware <team@noelware.org>
+ * Copyright (c) 2021-2024 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,25 +21,25 @@
  * SOFTWARE.
  */
 
-const { build } = require('tsup');
+import { Result, err, ok } from '../src/Result';
+import { expect, test } from 'bun:test';
 
-const main = async () => {
-    console.log('[@noelware/utils] building library...');
-    await build({
-        bundle: true,
-        clean: true,
-        dts: true,
-        outDir: './dist',
-        entry: ['./src/index.ts'],
-        name: 'utils',
-        sourcemap: true,
-        treeshake: true
-    });
+test.each<{ ok: boolean; result: Result<number, Error> }>([
+    { result: ok(42), ok: true },
+    { result: err(new Error()), ok: false }
+])('Result.isOk()', ({ result, ok }) => expect(result.isOk()).toBe(ok));
 
-    console.log('[@noelware/utils] done~ ^-^');
-};
+test.each<{ err: boolean; result: Result<number, Error> }>([
+    { result: ok(42), err: false },
+    { result: err(new Error()), err: true }
+])('Result.isErr()', ({ result, err }) => expect(result.isErr()).toBe(err));
 
-main().catch((ex) => {
-    console.error(ex);
-    process.exit(1);
+test('Result.map', () => {
+    expect(ok(42).map((val) => `number is ${val}`)).toEqual(ok('number is 42'));
+});
+
+test('Result.mapErr', () => expect(err(new Error('weow')).mapErr((err) => err.message)).toEqual(err('weow')));
+test('unwrap / expect', () => {
+    expect(() => err('weow').unwrap()).toThrow('called Result#unwrap() on an `Err` value: weow');
+    expect(() => err('weow').expect('a dummy message')).toThrow('a dummy message: weow');
 });

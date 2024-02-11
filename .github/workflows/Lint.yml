@@ -1,5 +1,5 @@
 # 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
-# Copyright (c) 2021-2023 Noelware <team@noelware.org>
+# Copyright (c) 2021-2024 Noelware, LLC. <team@noelware.org>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -61,24 +61,17 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v3
 
-            - name: Setup Node.js 20.x
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 20.x
+            - name: Setup Bun
+              uses: oven-sh/setup-bun@v1
 
-            - name: Setup Yarn and node-modules cache
-              id: yarn-cache
-              uses: auguwu/node-pm-action@master
+            - name: Install packages
+              run: bun install --frozen-lockfile
 
-            - name: Install dependencies
-              if: steps.yarn-cache.outputs.cache-hit != 'true' || steps.yarn-cache.outputs.node-modules-cache-hit != 'true'
-              run: yarn install --immutable
+            - name: Check for formatting
+              run: bun fmt
 
-            - name: Lint project
-              run: yarn lint
+            - name: Lint
+              run: bun lint
 
-            - name: Check for any compile errors
-              run: tsc --noEmit
-
-            - name: Run tests
-              run: yarn test
+            - name: Test
+              run: bun test

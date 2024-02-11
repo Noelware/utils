@@ -1,6 +1,6 @@
 /*
  * 🌸 @noelware/utils: Noelware's utilities package to not repeat code in our TypeScript projects.
- * Copyright (c) 2021-2023 Noelware <team@noelware.org>
+ * Copyright (c) 2021-2024 Noelware, LLC. <team@noelware.org>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,10 @@
 declare var window: any;
 declare var document: any;
 
-/** Months represented as 0-indexed values to the month name */
+/**
+ * Months represented as 0-indexed values to the month name
+ * @deprecated (since 2.5.0): this is no longer used
+ */
 export const Months: { [month: number]: string } = {
     0: 'January',
     1: 'Feburary',
@@ -40,7 +43,10 @@ export const Months: { [month: number]: string } = {
     11: 'December'
 };
 
-/** The days of a week */
+/**
+ * The days of a week
+ * @deprecated (since 2.5.0): this is no longer used
+ */
 export const DaysInWeek: { [day: number]: string } = {
     0: 'Sunday',
     1: 'Monday',
