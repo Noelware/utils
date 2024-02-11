@@ -30,7 +30,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Setup Bun
               uses: oven-sh/setup-bun@v1
@@ -55,3 +55,4 @@ jobs:
               with:
                   token: ${{ secrets.NPM_TOKEN }}
                   access: public
+                  provenance: true
