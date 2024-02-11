@@ -22,7 +22,6 @@
  */
 
 export type {
-    ReaddirOptions,
     ConstructorReturnType,
     Ctor,
     DecoupleArray,
@@ -31,7 +30,8 @@ export type {
     DotNotation,
     KeyToPropType,
     MaybePromise,
-    ObjectKeysWithSeperator
+    ObjectKeysWithSeperator,
+    ReaddirOptions
 } from './types';
 
 export * from './constants';
@@ -39,8 +39,8 @@ export * from './functions';
 export {
     EventBus,
     type EventEmitterLike,
-    type GenericEventBusMap,
     type ExtractListenerArguments,
+    type GenericEventBusMap,
     type Listener,
     isEventEmitterLike
 } from './EventBus';

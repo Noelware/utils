@@ -142,7 +142,7 @@ export function readdirSync(path: string, options: ReaddirOptions = {}) {
     let results: string[] = [];
     const fs = tryRequire<typeof import('fs')>('fs');
     const { join } = tryRequire<typeof import('path')>('path');
-    const excludePredicate = (file: import('fs').Dirent) => (item: string | RegExp) => {
+    const excludePredicate = (file: import('fs').Dirent) => (item: RegExp | string) => {
         if (typeof item === 'string') return item === file.name;
         return item.test(file.name);
     };

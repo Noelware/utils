@@ -27,10 +27,10 @@
  */
 export interface ReaddirOptions {
     /** A list of extensions to only output. This can be an array of strings or a regular expression. */
-    extensions?: (string | RegExp)[];
+    extensions?: Array<RegExp | string>;
 
     /** A list of excluded files. This can be an array of strings or a regular expression. */
-    exclude?: (string | RegExp)[];
+    exclude?: Array<RegExp | string>;
 }
 
 /**
@@ -64,7 +64,7 @@ export type ConstructorReturnType<T> = T extends new (...args: any[]) => infer P
 export type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]> };
 
 /** Represents `T` as a Promise or not. */
-export type MaybePromise<T> = T | Promise<T>;
+export type MaybePromise<T> = Promise<T> | T;
 
 /** Nestly make all properties in a object required */
 export type DeepRequired<T> = {
