@@ -21,7 +21,20 @@
  * SOFTWARE.
  */
 
-/* eslint-disable perfectionist/sort-imports */
+export * from './constants';
+export * from './functions';
+
+export {
+    EventBus,
+    type EventEmitterLike,
+    type ExtractListenerArguments,
+    type GenericEventBusMap,
+    type Listener,
+    isEventEmitterLike
+} from './EventBus';
+
+export { Lazy, lazy } from './Lazy';
+export { Stopwatch } from './Stopwatch';
 
 export type {
     ConstructorReturnType,
@@ -35,17 +48,3 @@ export type {
     ObjectKeysWithSeperator,
     ReaddirOptions
 } from './types';
-
-export * from './constants';
-export * from './functions';
-export {
-    EventBus,
-    type EventEmitterLike,
-    type ExtractListenerArguments,
-    type GenericEventBusMap,
-    type Listener,
-    isEventEmitterLike
-} from './EventBus';
-
-export { Lazy, lazy } from './Lazy';
-export { Stopwatch } from './Stopwatch';

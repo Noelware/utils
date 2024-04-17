@@ -130,7 +130,6 @@ export type DotNotation<T extends Record<string, unknown>, Keys extends string> 
  * Decouples an array's type from {@link __T__}. Returns the inferred
  * type or `never` if it's not an Array.
  */
-// eslint-disable-next-line
 export type DecoupleArray<T> = T extends Array<infer U> ? U : never;
 
 /**
