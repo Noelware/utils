@@ -22,7 +22,6 @@
  */
 
 export * from './constants';
-export * from './functions';
 
 export {
     EventBus,
@@ -32,6 +31,8 @@ export {
     type Listener,
     isEventEmitterLike
 } from './EventBus';
+
+export * from './functions';
 
 export { Lazy, lazy } from './Lazy';
 export { Stopwatch } from './Stopwatch';
