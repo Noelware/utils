@@ -224,8 +224,25 @@ export function omitUndefinedOrNull<T extends object>(obj: T) {
  * Does an assertion that `value` is an {@link Error `Error`}. It will throw a hard error
  * if `value` is not an instance of {@link Error `Error`}.
  *
+ * Since 2.5.1: Errors can now be any form of object containing a `{ message }` field inside of them. This can
+ * cause a conflict with the implementation, so you can disable it with the second argument as `false`.
+ *
  * @param value value given
+ * @param checkObject whether or not if `value` can be an object of `{ message }` or not.
  */
-export function assertIsError<E extends Error = Error>(value: unknown): asserts value is E {
-    if (!(value instanceof Error)) throw new Error(`Value was not \`Error\``);
+export function assertIsError<E extends { message: string } = Error>(
+    value: unknown,
+    checkObject = true
+): asserts value is E {
+    if (value instanceof Error) {
+        return;
+    }
+
+    if (checkObject && isObject(value)) {
+        if (!hasOwnProperty<any>(value, 'message')) {
+            throw new Error(`unable to retain given value (${value}) as a Error`);
+        }
+    }
+
+    throw new Error(`unable to retain given value (${value}) as a Error`);
 }

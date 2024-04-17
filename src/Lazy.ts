@@ -23,10 +23,13 @@
 
 /**
  * Creates a new {@link Lazy} object from a function.
+ *
+ * Since 2.5.1: lazily functions can include arguments as well
+ *
  * @param func The lazy function.
  * @returns A {@link Lazy} object.
  */
-export function lazy<T>(func: () => T): Lazy<T> {
+export function lazy<T, Args extends any[] = any[]>(func: (...args: Args) => T): Lazy<T, Args> {
     return new Lazy(func);
 }
 
@@ -43,15 +46,15 @@ export function lazy<T>(func: () => T): Lazy<T> {
  * console.log(myExpensiveFunc.get()); // => 42
  * ```
  */
-export class Lazy<T> {
+export class Lazy<T, Args extends any[] = any[]> {
     #cached: T | undefined = undefined;
-    #func: () => T;
+    #func: (...args: Args) => T;
 
-    constructor(func: () => T) {
+    constructor(func: (...args: Args) => T) {
         this.#func = func;
     }
 
-    get() {
-        return this.#cached !== undefined ? this.#cached : (this.#cached = this.#func.call(this));
+    get(...args: Args) {
+        return this.#cached !== undefined ? this.#cached : (this.#cached = this.#func.call(this, ...args));
     }
 }

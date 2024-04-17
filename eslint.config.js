@@ -21,11 +21,8 @@
  * SOFTWARE.
  */
 
-import config from '@augu/eslint-config';
+import noel from '@augu/eslint-config';
 import { fileURLToPath } from 'url';
-
-/** @type {import('@augu/eslint-config').default} */
-const noel = typeof Bun !== 'undefined' ? config : config.default;
 
 export default noel({
     perfectionist: true,
