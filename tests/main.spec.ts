@@ -56,16 +56,16 @@ describe('functions', () => {
     });
 
     test('assertIsError', () => {
-        function isError(value: unknown) {
+        function isError<E extends { message: string }>(value: unknown): asserts value is E {
             try {
                 utils.assertIsError(value);
-                return true;
             } catch (e) {
                 throw e;
             }
         }
 
         expect(() => isError('abcd')).toThrow();
+        expect(() => isError({ message: 'weow' })).not.toThrow();
         expect(() => isError(new Error('beep boop'))).not.toThrow();
     });
 });

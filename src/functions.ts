@@ -240,9 +240,13 @@ export function assertIsError<E extends { message: string } = Error>(
 
     if (checkObject && isObject(value)) {
         if (!hasOwnProperty<any>(value, 'message')) {
-            throw new Error(`unable to retain given value (${value}) as a Error`);
+            throw new Error(
+                `unable to retain given value (${JSON.stringify(value)}) as a Error (unable to validate object is an \`Error\`)`
+            );
+        } else {
+            return;
         }
     }
 
-    throw new Error(`unable to retain given value (${value}) as a Error`);
+    throw new Error(`unable to retain given value (${JSON.stringify(value)}) as a Error`);
 }
