@@ -22,13 +22,14 @@
  */
 
 import { Stopwatch } from '@noelware/utils';
+import { fileURLToPath } from 'node:url';
 import * as log from './util/logging';
 import * as prettier from 'prettier';
 import * as colors from 'colorette';
 import { resolve } from 'node:path';
 
 async function main() {
-    const ROOT = Bun.fileURLToPath(new URL('..', import.meta.url));
+    const ROOT = fileURLToPath(new URL('..', import.meta.url));
     log.info(`root directory: ${ROOT}`);
 
     const config = await prettier.resolveConfig(resolve(ROOT, '.prettierrc.json'));

@@ -24,7 +24,7 @@
 import noel from '@augu/eslint-config';
 import { fileURLToPath } from 'url';
 
-export default noel({
+export default (typeof noel === 'function' ? noel : noel.default)({
     perfectionist: true,
     typescript: {
         tsconfig: fileURLToPath(new URL('tsconfig.json', import.meta.url))

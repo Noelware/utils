@@ -22,11 +22,11 @@
  */
 
 import { Stopwatch } from '@noelware/utils';
+import { fileURLToPath } from 'node:url';
 import * as log from './util/logging';
-import { ESLint } from 'eslint';
 import * as colors from 'colorette';
 import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { ESLint } from 'eslint';
 
 async function main() {
     const ROOT = fileURLToPath(new URL('..', import.meta.url));
