@@ -21,19 +21,18 @@
  * SOFTWARE.
  */
 
-// @ts-ignore
-import { FlatESLint } from 'eslint/use-at-your-own-risk';
 import { Stopwatch } from '@noelware/utils';
 import * as log from './util/logging';
-import type { ESLint } from 'eslint';
+import { ESLint } from 'eslint';
 import * as colors from 'colorette';
 import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 async function main() {
-    const ROOT = Bun.fileURLToPath(new URL('..', import.meta.url));
+    const ROOT = fileURLToPath(new URL('..', import.meta.url));
     log.info(`root directory: ${ROOT}`);
 
-    const linter = new FlatESLint({
+    const linter = new ESLint({
         allowInlineConfig: true,
         fix: !log.ci,
         cwd: ROOT
