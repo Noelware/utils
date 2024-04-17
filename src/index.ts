@@ -21,8 +21,6 @@
  * SOFTWARE.
  */
 
-export * from './constants';
-
 export {
     EventBus,
     type EventEmitterLike,
@@ -31,11 +29,6 @@ export {
     type Listener,
     isEventEmitterLike
 } from './EventBus';
-
-export * from './functions';
-
-export { Lazy, lazy } from './Lazy';
-export { Stopwatch } from './Stopwatch';
 
 export type {
     ConstructorReturnType,
@@ -49,3 +42,9 @@ export type {
     ObjectKeysWithSeperator,
     ReaddirOptions
 } from './types';
+
+export { Lazy, lazy } from './Lazy';
+export { Stopwatch } from './Stopwatch';
+
+export * from './functions';
+export * from './constants';
