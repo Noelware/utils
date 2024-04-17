@@ -71,7 +71,7 @@ async function main() {
 
                         case 1:
                             log.warn(
-                                `[${msg.ruleId || '(unknown rule)'}] ${msg.message} (line ${msg.line}:${msg.column})`
+                                `[${msg.ruleId || '(unknown rule)'}] ${msg.message} (${file}:${msg.line}:${msg.column})`
                             );
                             continue;
 

@@ -21,6 +21,8 @@
  * SOFTWARE.
  */
 
+/* eslint-disable perfectionist/sort-imports */
+
 export type {
     ConstructorReturnType,
     Ctor,
