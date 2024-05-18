@@ -54,7 +54,7 @@
         "@types/bun": "1.1.2",
         "@types/node": "20.12.12",
         "colorette": "2.0.20",
-        "eslint": "9.2.0",
+        "eslint": "9.3.0",
         "eslint-config-prettier": "9.1.0",
         "eslint-formatter-codeframe": "7.32.1",
         "eslint-plugin-perfectionist": "2.10.0",
