@@ -59,7 +59,7 @@
         "eslint-formatter-codeframe": "7.32.1",
         "eslint-plugin-perfectionist": "2.11.0",
         "prettier": "3.3.3",
-        "tsup": "8.1.2",
+        "tsup": "8.2.0",
         "typescript": "5.5.3",
         "typescript-eslint": "7.16.1"
     }
