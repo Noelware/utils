@@ -60,7 +60,7 @@
         "eslint-plugin-perfectionist": "3.0.0",
         "prettier": "3.3.3",
         "tsup": "8.2.2",
-        "typescript": "5.5.3",
+        "typescript": "5.5.4",
         "typescript-eslint": "7.17.0"
     }
 }
