@@ -52,7 +52,7 @@
         "@augu/eslint-config": "5.2.4",
         "@augu/tsconfig": "1.2.0",
         "@types/bun": "1.1.6",
-        "@types/node": "20.14.11",
+        "@types/node": "20.14.12",
         "colorette": "2.0.20",
         "eslint": "9.7.0",
         "eslint-config-prettier": "9.1.0",
